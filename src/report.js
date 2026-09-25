@@ -15,9 +15,11 @@ const TERMINALS = new Set(['RUN_FINISHED', 'RUN_ERROR']);
  *   - A cut that genuinely lost content and was reported as though it had not.
  *     That is the finding.
  *
- * The first version of this file reported the first two as findings. On a real
- * corpus it called 158 cuts a problem when 48 were. A tool that cries wolf is
- * worse than no tool, so the distinction is now the whole design.
+ * The first version of this file reported the first two as findings. On the
+ * corpus in results/ that means calling 154 cuts a problem when 54 are real —
+ * `node results/run-ag-ui.mjs results/sever-results.json` prints both numbers.
+ * A tool that cries wolf is worse than no tool, so the distinction is now the
+ * whole design.
  */
 
 /**

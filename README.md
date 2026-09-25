@@ -55,8 +55,8 @@ Three things look identical in the raw numbers and only one of them is a finding
 
 So `summarise` reports nothing as a defect unless you pass `lostContent`, and it
 reports excluded streams as a count rather than dropping them silently. The first
-version of this file did not make these distinctions and called 154 cuts a problem
-on a corpus where 54 were. A tool that cries wolf is worse than no tool.
+version of `summarise` did not make these distinctions and called 154 cuts a
+problem on a corpus where 54 were. A tool that cries wolf is worse than no tool.
 
 ## Worked example: AG-UI's own conformance corpus
 
