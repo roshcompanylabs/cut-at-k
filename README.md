@@ -53,23 +53,30 @@ Three things look identical in the raw numbers and only one of them is a finding
 
 So `summarise` reports nothing as a defect unless you pass `lostContent`, and it
 reports excluded streams as a count rather than dropping them silently. The first
-version of this file did not make these distinctions and called 158 cuts a problem
-on a corpus where 48 were. A tool that cries wolf is worse than no tool.
+version of this file did not make these distinctions and called 154 cuts a problem
+on a corpus where 54 were. A tool that cries wolf is worse than no tool.
 
 ## Worked example: AG-UI's own conformance corpus
 
 [AG-UI](https://github.com/ag-ui-protocol/ag-ui) ships 68 conformance fixtures — real
 event streams, written by the protocol's authors, with the outcome each one requires.
 Replaying every fixture through a real `HttpAgent` over real HTTP/SSE, cut at every
-event boundary:
+event boundary. Both steps are in `results/`, and the recording is committed, so the
+block below is one command away:
+
+```
+node results/run-ag-ui.mjs results/sever-results.json
+```
+
 
 ```
 48 streams, 227 cuts, 18 streams excluded as invalid on purpose
+4 cuts threw during replay
 
-reported the same as the whole run    : 158
-  of which something was actually lost : 48
-  of those, no terminal event either   : 46
-spread across                          : 33 streams
+reported the same as the whole run    : 154
+  of which something was actually lost : 54
+  of those, no terminal event either   : 52
+spread across                          : 34 streams
 ```
 
 A cut here is the specification's own definition of a truncated run: the stream ends
@@ -109,9 +116,8 @@ kept outside it.
 
 ## Status
 
-Early. The core loop and the summary are tested (`npm test`, 10 tests, no
-dependencies); the AG-UI adapter lives in that checkout because it needs their client.
-The API will change.
+Early. The core loop, the byte-level severing and the summary are tested
+(`npm test`, 21 tests, no dependencies). The API will change.
 
 ## Licence
 
