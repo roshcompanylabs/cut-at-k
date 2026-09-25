@@ -15,13 +15,11 @@ The second one is where things are usually wrong, and it is quiet when it is wro
 which is why a loop is better at finding it than reading the code.
 
 ```bash
-git clone https://github.com/roshcompanylabs/cut-at-k
+npm install cut-at-k
 ```
 
-Not on npm yet. Zero dependencies, so a clone is the whole install.
-
 ```js
-import { severAtEveryPoint, summarise, format } from './src/index.js';
+import { severAtEveryPoint, summarise, format } from 'cut-at-k';
 
 const report = await severAtEveryPoint({
   events,                                  // the whole stream, in order
