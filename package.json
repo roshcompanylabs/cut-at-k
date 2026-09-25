@@ -1,6 +1,6 @@
 {
   "name": "cut-at-k",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Cut a stream at every point and check what the consumer is left with",
   "type": "module",
   "exports": {
