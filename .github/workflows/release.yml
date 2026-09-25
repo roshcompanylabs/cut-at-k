@@ -1,0 +1,80 @@
+name: Release
+
+# Publishing runs here rather than from a laptop so npm can verify the build and issue a
+# provenance attestation for it.
+#
+# Authentication is npm Trusted Publishing (OIDC): the job proves its identity to the
+# registry with a short-lived token minted by GitHub for this workflow, so there is no npm
+# token in this repository at all.
+#
+# Trusted publishing has to be configured once, on npmjs.com, under the package's settings
+# — which means the package has to exist there first. For a brand-new name the first
+# publish may have to happen from a laptop without provenance; every version after it comes
+# through here with one.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run every gate and pack the tarball, but do not publish'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  id-token: write # required for OIDC
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Trusted publishing needs npm 11.5.1+ and Node 22.14+. Node 22 ships an older
+          # npm, so the CLI is upgraded explicitly below.
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Use an npm that supports trusted publishing
+        run: |
+          npm install -g npm@latest
+          npm --version
+
+      # No dependencies, so there is nothing to install and no lockfile to respect.
+      - run: node --test
+
+      # The figures in the README are printed by the committed recording. If the tool and
+      # the README ever disagree, that is a defect in the thing this project is about.
+      - name: The README's numbers still come out of the code
+        run: |
+          node results/run-ag-ui.mjs results/sever-results.json > /tmp/out.txt
+          for n in 154 54 52 34; do
+            grep -q "$n" /tmp/out.txt || { echo "README figure $n is not in the output"; exit 1; }
+          done
+          echo "154 / 54 / 52 / 34 all present"
+
+      - name: Leak gate — no machine paths or personal data in the tarball
+        run: node scripts/leak-gate.mjs
+
+      - name: Check the tag matches package.json
+        if: github.event_name == 'release'
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          PKG="$(node -p "require('./package.json').version")"
+          if [ "$TAG" != "$PKG" ]; then
+            echo "Release tag $TAG does not match package.json version $PKG"
+            exit 1
+          fi
+          echo "version $PKG"
+
+      # No --provenance flag and no token: trusted publishing attaches the attestation.
+      - name: Publish
+        if: github.event_name == 'release' || inputs.dry_run == false
+        run: npm publish --access public
+
+      - name: Dry run
+        if: github.event_name == 'workflow_dispatch' && inputs.dry_run == true
+        run: npm publish --access public --dry-run
