@@ -62,9 +62,10 @@ problem on a corpus where 54 were. A tool that cries wolf is worse than no tool.
 
 [AG-UI](https://github.com/ag-ui-protocol/ag-ui) ships 68 conformance fixtures — real
 event streams, written by the protocol's authors, with the outcome each one requires.
-Replaying every fixture through a real `HttpAgent` over real HTTP/SSE, cut at every
-event boundary. Both steps are in `results/`, and the recording is committed, so the
-block below is one command away:
+Two are a single event long and have no cut point, so 66 were replayed: each through a
+real `HttpAgent` over real HTTP/SSE, whole and then cut at every event boundary. Both
+steps are in `results/` and the recording is committed, so the block below is one
+command away:
 
 ```
 node results/run-ag-ui.mjs results/sever-results.json
