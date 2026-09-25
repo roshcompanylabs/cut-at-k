@@ -89,16 +89,43 @@ after k events with no further frames and no terminal event. From
 > having succeeded.
 
 The smallest case, from their `conformant-run-is-quiet` fixture cut after its fourth
-event:
+event. What `runAgent()` actually resolves to, verbatim:
 
 ```
-truncated   settled {"result":null,"newMessages":1}   text "Hello, "
-            events  RUN_STARTED STEP_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT
-completed   settled {"result":null,"newMessages":1}   text "Hello, world."
+truncated   events   RUN_STARTED STEP_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT
+            resolved {"newMessages":[{"id":"m-1","role":"assistant","content":"Hello, "}]}
+completed   resolved {"newMessages":[{"id":"m-1","role":"assistant","content":"Hello, world."}]}
 ```
 
-The awaited call reports the same value either way. A subscriber sees no terminal
-event at all. Neither channel says the run was cut.
+Both calls resolve. Neither rejects, and `RunAgentResult` has no field that says which
+one was cut short — its `result` member is `undefined` in both, so `JSON.stringify`
+omits it entirely. The two values are not identical: the truncated one carries less
+text. But the caller has nothing to compare it against, and the message count is 1
+either way, so a caller that checks whether the call succeeded, or how many messages
+came back, is told the same thing by a run that finished and a run that stopped
+halfway through a sentence.
+
+Be precise about the limit of that, because it matters: a subscriber **can** detect
+this today. `onRunFinishedEvent` fires on the completed run and not on the truncated
+one, while `onRunFinalized` fires on both. So the claim is not that the client hides
+the truncation everywhere — it is that the awaited call does not surface it, which is
+the channel most callers use.
+
+### This is already known, and someone has written the fix
+
+None of the above is a discovery. It was reported on 2026-08-03 as
+[ag-ui-protocol/ag-ui#2300](https://github.com/ag-ui-protocol/ag-ui/issues/2300) —
+"a stream that ends without RUN_FINISHED/RUN_ERROR resolves as success" — and
+[#2354](https://github.com/ag-ui-protocol/ag-ui/pull/2354) has been open since
+2026-08-07 with the fix: `verifyEvents` asserting that a terminal event arrived, so a
+stream that just stops becomes an error instead of a silent success. Both were open at
+the time of writing.
+
+That is the argument for this tool rather than against it. The bug was found once, by
+hand, on one stream. Running the same corpus through this loop surfaces **54** cuts of
+that shape across **34** streams without anyone guessing where to look — and when
+#2354 merges, re-running the recording is how you find out which of the 54 it actually
+fixed.
 
 `results/run-ag-ui.mjs` reproduces the table from the recorded observations, through
 this library's own summary rather than separate arithmetic, so the numbers above and
