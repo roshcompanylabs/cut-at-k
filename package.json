@@ -6,11 +6,23 @@
   "exports": {
     ".": "./src/index.js"
   },
-  "files": ["src", "README.md", "LICENSE"],
+  "files": [
+    "src",
+    "results",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "node --test"
   },
-  "keywords": ["streaming", "truncation", "conformance", "sse", "testing", "agent"],
+  "keywords": [
+    "streaming",
+    "truncation",
+    "conformance",
+    "sse",
+    "testing",
+    "agent"
+  ],
   "license": "MIT",
   "author": {
     "name": "Redouane - ROSH Company Labs"
@@ -19,5 +31,7 @@
     "type": "git",
     "url": "git+https://github.com/roshcompanylabs/cut-at-k.git"
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  }
 }
