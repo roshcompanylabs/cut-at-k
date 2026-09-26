@@ -14,6 +14,7 @@
 import { createServer } from 'node:http';
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, basename } from 'node:path';
+import { createRequire } from 'node:module';
 import { HttpAgent } from '@ag-ui/client';
 
 const CORPUS = process.argv[2];
@@ -137,7 +138,16 @@ for (const fx of fixtures) {
 }
 process.stderr.write('\n');
 
-writeFileSync(OUT, JSON.stringify({ rows }, null, 1));
+// Which client produced this. Without it the figures cannot be re-recorded by anyone,
+// which is the whole point of committing the observations rather than the numbers.
+const clientVersion = JSON.parse(
+  readFileSync(createRequire(import.meta.url).resolve('@ag-ui/client/package.json'), 'utf8'),
+).version;
+
+writeFileSync(
+  OUT,
+  JSON.stringify({ client: { name: '@ag-ui/client', version: clientVersion }, rows }, null, 1),
+);
 console.log(`fixtures seen: ${fixtures.length}`);
 console.log(`fixtures replayed (>=2 events): ${new Set(rows.map((r) => r.fixture)).size}`);
 console.log(`rows (cuts): ${rows.length}`);

@@ -1,4 +1,8 @@
 {
+ "client": {
+  "name": "@ag-ui/client",
+  "version": "1.0.0"
+ },
  "rows": [
   {
    "fixture": "activity-delta-missing-target-tolerated",
@@ -817,7 +821,7 @@
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"d31f897f-0ee1-4029-a0c2-69fb23c2466d\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -834,7 +838,7 @@
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"d31f897f-0ee1-4029-a0c2-69fb23c2466d\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -845,13 +849,13 @@
    "cutMessages": "reasoning:",
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "",
-   "cutMessagesJson": "[{\"id\":\"4ab7a141-a534-436e-8698-1c6b03970162\",\"role\":\"reasoning\",\"content\":\"\"}]",
+   "cutMessagesJson": "[{\"id\":\"982cc4a1-d6bb-4e41-aee4-142c44a626dc\",\"role\":\"reasoning\",\"content\":\"\"}]",
    "wholeDelivered": "RUN_STARTED REASONING_START REASONING_MESSAGE_START REASONING_MESSAGE_CONTENT REASONING_MESSAGE_END REASONING_END TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END RUN_FINISHED",
    "wholeSettled": "{\"result\":null,\"newMessages\":2}",
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"d31f897f-0ee1-4029-a0c2-69fb23c2466d\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -862,13 +866,13 @@
    "cutMessages": "reasoning:Let me check.",
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "Let me check.",
-   "cutMessagesJson": "[{\"id\":\"574d9cdf-838f-44d4-860c-52c9fc436f00\",\"role\":\"reasoning\",\"content\":\"Let me check.\"}]",
+   "cutMessagesJson": "[{\"id\":\"bbf406ed-71b2-4d36-8598-63068d7c4d61\",\"role\":\"reasoning\",\"content\":\"Let me check.\"}]",
    "wholeDelivered": "RUN_STARTED REASONING_START REASONING_MESSAGE_START REASONING_MESSAGE_CONTENT REASONING_MESSAGE_END REASONING_END TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END RUN_FINISHED",
    "wholeSettled": "{\"result\":null,\"newMessages\":2}",
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"d31f897f-0ee1-4029-a0c2-69fb23c2466d\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -879,13 +883,13 @@
    "cutMessages": "reasoning:Let me check.",
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "Let me check.",
-   "cutMessagesJson": "[{\"id\":\"b5922af2-1b83-41ae-be60-f26c786bf644\",\"role\":\"reasoning\",\"content\":\"Let me check.\"}]",
+   "cutMessagesJson": "[{\"id\":\"71dbfb22-7fef-42a3-b4f1-27b895858747\",\"role\":\"reasoning\",\"content\":\"Let me check.\"}]",
    "wholeDelivered": "RUN_STARTED REASONING_START REASONING_MESSAGE_START REASONING_MESSAGE_CONTENT REASONING_MESSAGE_END REASONING_END TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END RUN_FINISHED",
    "wholeSettled": "{\"result\":null,\"newMessages\":2}",
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"d31f897f-0ee1-4029-a0c2-69fb23c2466d\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -896,13 +900,13 @@
    "cutMessages": "reasoning:Let me check.",
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "Let me check.",
-   "cutMessagesJson": "[{\"id\":\"ebafc06e-6dfe-437a-83a4-a5f0f751525f\",\"role\":\"reasoning\",\"content\":\"Let me check.\"}]",
+   "cutMessagesJson": "[{\"id\":\"32b14f8b-b9a9-479d-87ff-eefb7794ed58\",\"role\":\"reasoning\",\"content\":\"Let me check.\"}]",
    "wholeDelivered": "RUN_STARTED REASONING_START REASONING_MESSAGE_START REASONING_MESSAGE_CONTENT REASONING_MESSAGE_END REASONING_END TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END RUN_FINISHED",
    "wholeSettled": "{\"result\":null,\"newMessages\":2}",
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"d31f897f-0ee1-4029-a0c2-69fb23c2466d\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -913,13 +917,13 @@
    "cutMessages": "reasoning:Let me check.\u0001assistant:",
    "cutMessagesCount": 2,
    "cutMessagesContentOnly": "Let me check.\u0001",
-   "cutMessagesJson": "[{\"id\":\"8a5893e4-877f-4f50-8152-9cab1fae76e6\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"\"}]",
+   "cutMessagesJson": "[{\"id\":\"517d746e-90a2-4f2b-a9ab-b67f417f1fa1\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"\"}]",
    "wholeDelivered": "RUN_STARTED REASONING_START REASONING_MESSAGE_START REASONING_MESSAGE_CONTENT REASONING_MESSAGE_END REASONING_END TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END RUN_FINISHED",
    "wholeSettled": "{\"result\":null,\"newMessages\":2}",
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"d31f897f-0ee1-4029-a0c2-69fb23c2466d\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -930,13 +934,13 @@
    "cutMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "cutMessagesCount": 2,
    "cutMessagesContentOnly": "Let me check.\u0001Checked.",
-   "cutMessagesJson": "[{\"id\":\"9767d7cd-9828-4e10-a2dc-aebdec9cc971\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]",
+   "cutMessagesJson": "[{\"id\":\"2c1bea1e-769d-4568-8925-a231053d19a5\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]",
    "wholeDelivered": "RUN_STARTED REASONING_START REASONING_MESSAGE_START REASONING_MESSAGE_CONTENT REASONING_MESSAGE_END REASONING_END TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END RUN_FINISHED",
    "wholeSettled": "{\"result\":null,\"newMessages\":2}",
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"d31f897f-0ee1-4029-a0c2-69fb23c2466d\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -947,13 +951,13 @@
    "cutMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "cutMessagesCount": 2,
    "cutMessagesContentOnly": "Let me check.\u0001Checked.",
-   "cutMessagesJson": "[{\"id\":\"15b56ff3-5d97-4644-9175-ba1cc8c42319\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]",
+   "cutMessagesJson": "[{\"id\":\"47127635-ebf9-4ed2-8912-fa06aac11e12\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]",
    "wholeDelivered": "RUN_STARTED REASONING_START REASONING_MESSAGE_START REASONING_MESSAGE_CONTENT REASONING_MESSAGE_END REASONING_END TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END RUN_FINISHED",
    "wholeSettled": "{\"result\":null,\"newMessages\":2}",
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"d31f897f-0ee1-4029-a0c2-69fb23c2466d\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-47-upgrades-binary-content",

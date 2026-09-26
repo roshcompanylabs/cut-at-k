@@ -61,7 +61,8 @@ problem on a corpus where 54 were. A tool that cries wolf is worse than no tool.
 [AG-UI](https://github.com/ag-ui-protocol/ag-ui) ships 68 conformance fixtures — real
 event streams, written by the protocol's authors, with the outcome each one requires.
 Two are a single event long and have no cut point, so 66 were replayed: each through a
-real `HttpAgent` over real HTTP/SSE, whole and then cut at every event boundary. Both
+real `HttpAgent` over real HTTP/SSE — `@ag-ui/client@1.0.0` — whole and then cut at every
+event boundary. Both
 steps are in `results/` and the recording is committed, so the block below is one
 command away:
 
@@ -133,7 +134,10 @@ the numbers the tool prints cannot drift apart.
 
 ### What this is not
 
-It is one protocol, one client, at one commit, cut at event boundaries. Cutting inside
+It is one protocol, cut at event boundaries, and one client at one version:
+`@ag-ui/client@1.0.0`. The figures move with the client, so the version is part of the
+result rather than a footnote — replaying the same corpus through `0.0.58` gives
+141/49/47/31, because that older client rejects four fixtures this one parses. Cutting inside
 a frame — mid-UTF-8 sequence, mid-SSE frame, mid tool-call JSON — is not covered yet
 and is where the more interesting failures probably live. Other frameworks have no
 validator of their own to use as an oracle, so for those the harness would have to
