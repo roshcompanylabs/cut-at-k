@@ -12,7 +12,7 @@
  * Read the version line this prints. An earlier run of this probe measured
  * `@mastra/core@0.24.9` without noticing, found that a stream ending with no
  * `finish` part persisted nothing, and was two edits away from filing it. That
- * version shipped in December 2025 and the behaviour was fixed in 1.33.1. The
+ * version shipped on 2025-12-19, 882 releases before the one measured here. The
  * guard at the top of this file is the direct result.
  */
 import { severAtEveryPoint, summarise, format } from '../src/index.js';

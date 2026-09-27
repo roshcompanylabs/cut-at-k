@@ -16,7 +16,10 @@
  * at the bottom.
  */
 import { severAtEveryPoint, summarise, format } from '../src/index.js';
+import { requireLatest } from './_versions.mjs';
 import { StateGraph, Annotation, START, END, MemorySaver } from '@langchain/langgraph';
+
+await requireLatest(['@langchain/langgraph', '@langchain/core'], { from: import.meta.url });
 
 const State = Annotation.Root({
   steps: Annotation({
@@ -75,9 +78,6 @@ async function replay(prefix) {
 
 const report = await severAtEveryPoint({ events: NODES, replay, label: 'graph' });
 
-const version = (await import('@langchain/langgraph/package.json', { with: { type: 'json' } }))
-  .default.version;
-console.log(`@langchain/langgraph@${version}\n`);
 console.log(
   format(
     summarise([report], {

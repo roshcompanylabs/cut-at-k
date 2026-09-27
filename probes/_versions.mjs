@@ -2,7 +2,7 @@
  * Refuse to measure a package that is not the current release.
  *
  * This exists because of a real afternoon. `npm install @mastra/core` returned
- * 0.24.9 while latest was 1.71.0 — 887 versions apart, nine months old — because
+ * 0.24.9 while latest was 1.71.0 — 882 releases apart, nine months old — because
  * 1.71.0 declares `engines: node >=22.13.0` and the machine was on Node 20. npm
  * printed an EBADENGINE warning in the middle of the install output and no
  * error, and a whole finding was measured, written up and nearly filed against
@@ -13,6 +13,8 @@
  * measurement, not after, and it stops rather than warns.
  */
 import { createRequire } from 'node:module';
+import { readFileSync } from 'node:fs';
+import { join, sep } from 'node:path';
 
 /**
  * @param {string[]} names npm package names the probe is about to measure.
@@ -26,7 +28,17 @@ export async function requireLatest(names, { from } = {}) {
   const stale = [];
 
   for (const name of names) {
-    const installed = req(`${name}/package.json`).version;
+    // Not every package exports ./package.json — `openai` does not — so resolve
+    // the entry point and walk up to the manifest beside it.
+    let installed;
+    try {
+      installed = req(`${name}/package.json`).version;
+    } catch {
+      const entry = req.resolve(name);
+      const marker = `node_modules${sep}${name.split('/').join(sep)}${sep}`;
+      const root = entry.slice(0, entry.indexOf(marker) + marker.length);
+      installed = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version;
+    }
     let latest;
     try {
       const res = await fetch(`https://registry.npmjs.org/${name.replace('/', '%2f')}`);

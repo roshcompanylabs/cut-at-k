@@ -15,8 +15,11 @@
  * clean, the cut runs mean nothing, and both mistakes above were caught that way.
  */
 import { severAtEveryPoint, summarise, format } from '../src/index.js';
+import { requireLatest } from './_versions.mjs';
 import { streamText } from 'ai';
 import { MockLanguageModelV3, convertArrayToReadableStream } from 'ai/test';
+
+await requireLatest(['ai'], { from: import.meta.url });
 
 /** The stream, in order. A cut is a prefix of this. */
 const PARTS = [
@@ -35,8 +38,8 @@ const PARTS = [
 
 /**
  * Run one prefix through a real `streamText` and report what the caller was left
- * with. `delivered` and `settled` are the two fields the library interprets;
- * `text` rides along for the lostContent predicate below.
+ * with. `delivered` and `settled` are the two fields the library interprets; the
+ * rest ride along for the predicate and the table below.
  */
 async function replay(prefix) {
   const model = new MockLanguageModelV3({
@@ -46,6 +49,7 @@ async function replay(prefix) {
   let finishReason = null;
   let handed = null;
   let errored = null;
+  let errorName = null;
 
   const result = streamText({
     model,
@@ -56,6 +60,7 @@ async function replay(prefix) {
     },
     onError: (e) => {
       errored = String(e?.error?.message ?? e?.error).slice(0, 60);
+      errorName ??= e?.error?.name ?? null;
     },
   });
 
@@ -74,13 +79,13 @@ async function replay(prefix) {
     settled: JSON.stringify({ finishReason, errored }),
     text,
     handed,
+    finishReason,
+    errorName,
   };
 }
 
 const report = await severAtEveryPoint({ events: PARTS, replay, label: 'streamText' });
 
-const version = (await import('ai/package.json', { with: { type: 'json' } })).default.version;
-console.log(`ai@${version}\n`);
 console.log(
   format(
     summarise([report], {
@@ -90,22 +95,35 @@ console.log(
   ),
 );
 
-// The two things the summary cannot see, because they are specific to this SDK.
+// What the summary cannot see, because it is specific to this SDK. A cut reaches
+// the caller in one of two shapes depending on whether any text got through, and
+// the table is here so the claim in probes/README.md can be checked against it.
 const cuts = report.cuts ?? [];
-const differs = cuts.every(
-  (c) => c.observation?.settled !== report.whole?.settled,
-);
+
+console.log('');
+console.log('  cut  finishReason  error                     text === onFinish text');
+for (const c of cuts) {
+  const o = c.observation ?? {};
+  console.log(
+    `  ${String(c.k).padEnd(5)}${String(o.finishReason ?? '—').padEnd(14)}` +
+      `${String(o.errorName ?? '—').padEnd(26)}${o.text === (o.handed ?? '')}`,
+  );
+}
+
+const differs = cuts.every((c) => c.observation?.settled !== report.whole?.settled);
 const displayIsWhatIsPersisted = [report.whole, ...cuts.map((c) => c.observation)]
   .filter(Boolean)
   .every((o) => o.text === (o.handed ?? ''));
 
 console.log('');
+console.log(`  the whole run reports                           : ${report.whole?.finishReason}`);
 console.log(`  every cut reports differently from the whole run : ${differs}`);
 console.log(`  what was streamed is what onFinish was handed    : ${displayIsWhatIsPersisted}`);
 console.log('');
-console.log(
-  differs && displayIsWhatIsPersisted
-    ? '  No finding. The caller can tell a cut run from a complete one, and the\n' +
-        '  text it displayed is the text it was asked to persist.'
-    : '  Look closer.',
-);
+if (differs && displayIsWhatIsPersisted) {
+  console.log('  No finding. The caller can tell a cut run from a complete one — by a');
+  console.log('  finishReason of `other` where text got through, or by the error raised');
+  console.log('  where none did — and what it displayed is what it was asked to persist.');
+} else {
+  console.log('  Look closer.');
+}

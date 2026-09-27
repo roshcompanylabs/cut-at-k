@@ -1,4 +1,4 @@
-# The same question, asked of four implementations
+# The same question, asked of five implementations
 
 When a run stops early, can the consumer tell — and does what it was shown still
 agree with what was saved?
@@ -23,15 +23,16 @@ reported, as a string), and anything else you want carried into `lostContent`.
 | | when the run is cut | verdict |
 |---|---|---|
 | **AG-UI** `@ag-ui/client@1.0.0` | the awaited call resolves with what a completed run resolves with | **reported** |
-| **Vercel AI SDK** `ai@6.0.293` | `finishReason` is `other` instead of `stop`, and the text streamed is the text handed to `onFinish` | clean |
+| **Vercel AI SDK** `ai@7.0.118` | a cut that streamed text reports `finishReason: other`; a cut that streamed none raises instead | clean |
 | **LangGraph JS** `@langchain/langgraph@1.4.18` | the checkpoint stops where the consumer stopped, `next` says where to resume, and the call raises | clean |
 | **Mastra** `@mastra/core@1.71.0` | every cut that showed the consumer text still persisted it, and an error part raises | clean |
+| **OpenAI Node** `openai@7.23.0` | `finalResponse()` still carries the tool call the consumer watched arrive, and `status` never says `completed` | clean |
 
-Four asked, one answered wrongly. That ratio is the point: a harness that finds a
+Five asked, one answered wrongly. That ratio is the point: a harness that finds a
 defect everywhere it looks is measuring itself.
 
-Every probe refuses to run against anything but the current release, which is not
-caution for its own sake — see the Mastra section.
+Every probe that installs an SDK refuses to run against anything but the current
+release, which is not caution for its own sake — see the Mastra section.
 
 ## AG-UI — the one with the finding
 
@@ -40,7 +41,7 @@ node results/run-ag-ui.mjs results/sever-results.json
 ```
 
 Reads the committed recording rather than replaying, so it needs nothing installed.
-48 streams, 227 cuts, 18 excluded as invalid on purpose; 154 cuts where the client
+48 streams, 227 cuts, 18 streams excluded as invalid on purpose; 154 cuts where the client
 reported the same as the whole run, 54 of those where something was actually lost,
 52 of those with no terminal event either.
 
@@ -58,10 +59,21 @@ npm install ai
 node probes/vercel-ai-sdk.mjs
 ```
 
-The model's stream is cut after k parts, so no `finish` part ever arrives. The
-complete run reports `stop`; every cut run reports `other`. A caller that checks
-`finishReason` can tell, and the text that was streamed is the text `onFinish` was
-handed, so display and persistence do not diverge.
+The model's stream is cut after k parts, so no `finish` part ever arrives. The whole
+run reports `stop`, and a cut comes back to the caller in one of two shapes:
+
+```
+  cut  finishReason  error                     text === onFinish text
+  1    —             AI_NoOutputGeneratedError true
+  2    —             AI_NoOutputGeneratedError true
+  3    other         —                         true
+  4    other         —                         true
+```
+
+A cut that got text through reports `finishReason: other`. A cut that got none never
+calls `onFinish` at all and raises `AI_NoOutputGeneratedError` instead. Either way the
+caller can tell, and in every case the text that was streamed is the text `onFinish`
+was handed, so display and persistence do not diverge.
 
 Worth knowing while reading the probe: the provider stream part carries
 `finishReason: { unified: 'stop' }`, while `onFinish` receives the unwrapped string.
@@ -112,17 +124,53 @@ still persisted an assistant message; the two that persisted nothing had shown n
 which is not a loss. An `error` part raises rather than passing silently.
 
 **An earlier run of this probe found the opposite, and it was wrong.** It measured
-`@mastra/core@0.24.9` — published December 2025, 887 versions behind — because
+`@mastra/core@0.24.9` — published 2025-12-19, 882 releases behind — because
 `npm install @mastra/core` silently resolved there: 1.71.0 declares
 `engines: node >=22.13.0`, the machine was on Node 20, and npm picks the newest version
-your Node satisfies and warns rather than failing. On that build a stream ending with no
-`finish` part persisted nothing, and the finding was written up and two edits from
-being filed. The behaviour was fixed in 1.33.1, nine months before it was "found".
+your Node satisfies and warns rather than failing. On that nine-month-old build a stream
+ending with no `finish` part persisted nothing, and the finding was written up and two
+edits from being filed. Which release changed it is not something this establishes —
+only that the behaviour on the current one is correct.
 
 `probes/_versions.mjs` now stops any probe whose install is not the current release. It
 runs before the measurement rather than after, because a measurement of the wrong version
 is not a weaker result, it is not a result — and the version line is the first thing a
 maintainer checks.
+
+It earned its keep a second time straight away. The Vercel row above read `ai@6.0.293`
+until `ai@7` shipped, and re-running under the guard is what turned that row into the
+two shapes it actually has.
+
+## OpenAI Node — clean, on the half a client owns
+
+```bash
+npm install openai
+node probes/openai-node.mjs
+```
+
+The question comes from
+[openai-python#3561](https://github.com/openai/openai-python/issues/3561), open since
+2026-07-31: aborting a streaming Responses request after a `function_call` item has
+been streamed leaves that item unpersisted, so the next turn fails with a 400 because
+the remote conversation has no record of the call the output belongs to.
+
+That is the Python SDK, and the part that breaks is server-side state — reproducing it
+needs a real conversation, so it is not what this measures. What this measures is the
+half a client owns, in the Node SDK: after the cut, does `finalResponse()` still carry
+the `function_call` the consumer watched arrive, and does `status` avoid claiming the
+response completed. A caller that executes the tool locally is relying on both.
+
+```
+  cut  consumer saw the call   final.status   calls kept   threw
+  1    false                 in_progress    0            —
+  3    true                  in_progress    1            —
+  6    true                  in_progress    1            —
+```
+
+All four cuts that showed the consumer a tool call still had it in `finalResponse()`,
+none of the six reports `completed`, and none throws. The transport is a `fetch` the
+probe supplies, so the frames are exactly the ones listed in the file and no key is
+ever used.
 
 ## What these probes are not
 
