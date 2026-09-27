@@ -31,6 +31,7 @@
     "type": "git",
     "url": "git+https://github.com/roshcompanylabs/cut-at-k.git"
   },
+  "funding": "https://github.com/sponsors/roshcompanylabs",
   "engines": {
     "node": ">=18"
   }
