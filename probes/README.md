@@ -3,8 +3,22 @@
 When a run stops early, can the consumer tell — and does what it was shown still
 agree with what was saved?
 
-Each probe here is self-contained and prints its own verdict. They are not part of
-the published package and pull in the SDK they test, so install that first.
+Each probe drives the library rather than reimplementing it: everything specific to
+the SDK lives in one `replay` function, and the loop, the comparison and the report
+come from `severAtEveryPoint` and `summarise`. To point this at something else, copy
+the shortest one and change `replay` and the `lostContent` predicate. Nothing else.
+
+They sit outside `files`, so the published package keeps its zero dependencies while
+each probe pulls in the SDK it tests. Install that first.
+
+```js
+const report = await severAtEveryPoint({ events, replay, label: 'my-client' });
+console.log(format(summarise([report], { lostContent: (cut, whole) => /* ... */ })));
+```
+
+`replay(prefix)` runs one prefix through your client and returns what the caller was
+left with: `delivered` (the event types it surfaced), `settled` (how the awaited call
+reported, as a string), and anything else you want carried into `lostContent`.
 
 | | when the run is cut | verdict |
 |---|---|---|
@@ -33,7 +47,7 @@ harness added was the frequency, and then
 [a false positive in that fix](https://github.com/ag-ui-protocol/ag-ui/pull/2354#issuecomment-5849020368):
 its cancellation exemption does not survive a stop-and-resend.
 
-## Vercel AI SDK — clean
+## Vercel AI SDK — clean, and the shortest adapter to copy
 
 ```bash
 npm install ai
@@ -60,7 +74,9 @@ node probes/langgraph-js.mjs
 This is the one place the question has real teeth, because the checkpointer owns the
 saving. Elsewhere "what was saved" is the caller's business; here it is the library's.
 
-Two different things can stop a run early:
+The cut here is an abort after k chunks rather than a prefix of a recorded stream,
+because the graph produces its own events and cancelling is the only way to stop it
+early. Two different things can stop a run early:
 
 ```
   mode    consumer saw      checkpoint holds   next     threw

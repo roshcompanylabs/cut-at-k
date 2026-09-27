@@ -1,24 +1,24 @@
 /**
- * Vercel AI SDK: does a stream that ends early leave the caller unable to tell?
+ * Vercel AI SDK, through this library rather than beside it.
  *
  *   npm install ai
  *   node probes/vercel-ai-sdk.mjs
  *
- * The model's stream is cut after k parts, so the run ends with no `finish` part
- * — the specification case of a truncated run. The question is not whether the
- * tail is lost; it is whether anything the caller can read says so.
+ * This is the shortest complete adapter, and it is here to be copied. Everything
+ * specific to the SDK lives in `replay`; the loop, the comparison and the report
+ * come from the library. To point it at something else, change `replay` and the
+ * `lostContent` predicate and nothing else.
  *
- * Two shapes, and they are not the same: the provider stream part carries
+ * Two shapes that are easy to get wrong: the provider stream part carries
  * `finishReason: { unified: 'stop' }`, while `onFinish` is handed the unwrapped
- * string. Reading `.unified` off the callback value gives undefined.
- *
- * The whole run is the control. If it does not come back clean, the cut runs
- * mean nothing — both mistakes above were caught that way, once by passing a
- * V2-style string to a V3 model and once by reading the wrong shape here.
+ * string. The whole run is the control in every probe — if it does not come back
+ * clean, the cut runs mean nothing, and both mistakes above were caught that way.
  */
+import { severAtEveryPoint, summarise, format } from '../src/index.js';
 import { streamText } from 'ai';
 import { MockLanguageModelV3, convertArrayToReadableStream } from 'ai/test';
 
+/** The stream, in order. A cut is a prefix of this. */
 const PARTS = [
   { type: 'stream-start', warnings: [] },
   { type: 'text-start', id: '0' },
@@ -33,67 +33,78 @@ const PARTS = [
   },
 ];
 
-async function run(cutAfter) {
+/**
+ * Run one prefix through a real `streamText` and report what the caller was left
+ * with. `delivered` and `settled` are the two fields the library interprets;
+ * `text` rides along for the lostContent predicate below.
+ */
+async function replay(prefix) {
   const model = new MockLanguageModelV3({
-    doStream: async () => ({
-      stream: convertArrayToReadableStream(
-        cutAfter === null ? PARTS : PARTS.slice(0, cutAfter),
-      ),
-    }),
+    doStream: async () => ({ stream: convertArrayToReadableStream(prefix) }),
   });
 
-  let finished = null;
+  let finishReason = null;
+  let handed = null;
   let errored = null;
+
   const result = streamText({
     model,
     prompt: 'x',
     onFinish: (e) => {
-      finished = { finishReason: e.finishReason, text: e.text };
+      finishReason = e.finishReason;
+      handed = e.text;
     },
     onError: (e) => {
-      errored = String(e?.error?.message ?? e?.error).slice(0, 48);
+      errored = String(e?.error?.message ?? e?.error).slice(0, 60);
     },
   });
 
-  let seen = '';
+  let text = '';
   try {
-    for await (const delta of result.textStream) seen += delta;
-  } catch (e) {
+    for await (const delta of result.textStream) text += delta;
+  } catch {
     errored ??= 'textStream threw';
   }
   await new Promise((r) => setTimeout(r, 60));
 
-  return { cutAfter, seen, finished, errored };
+  return {
+    delivered: prefix.map((p) => p.type),
+    // How the awaited call reported. This is what "reported the same as the whole
+    // run" compares, so it has to carry every channel the caller could read.
+    settled: JSON.stringify({ finishReason, errored }),
+    text,
+    handed,
+  };
 }
 
-const rows = [];
-for (const k of [null, 6, 5, 4, 3, 2]) rows.push(await run(k));
+const report = await severAtEveryPoint({ events: PARTS, replay, label: 'streamText' });
 
-const whole = rows[0];
-console.log(`ai@${(await import('ai/package.json', { with: { type: 'json' } })).default.version}\n`);
-console.log('  cut   finishReason   text seen                       text handed to onFinish');
-for (const r of rows) {
-  console.log(
-    `  ${String(r.cutAfter ?? 'none').padEnd(5)} ` +
-      `${String(r.finished?.finishReason ?? '—').padEnd(14)} ` +
-      `${JSON.stringify(r.seen).padEnd(42)} ${JSON.stringify(r.finished?.text ?? null)}` +
-      (r.errored ? `  err=${r.errored}` : ''),
-  );
-}
-
-const cuts = rows.slice(1);
-const distinguishable = cuts.every(
-  (r) => r.finished?.finishReason !== whole.finished?.finishReason,
+const version = (await import('ai/package.json', { with: { type: 'json' } })).default.version;
+console.log(`ai@${version}\n`);
+console.log(
+  format(
+    summarise([report], {
+      // Content is lost when the text this cut produced differs from the whole run's.
+      lostContent: (cut, whole) => cut.text !== whole.text,
+    }),
+  ),
 );
-const displayMatchesSaved = rows.every((r) => r.seen === (r.finished?.text ?? ''));
+
+// The two things the summary cannot see, because they are specific to this SDK.
+const cuts = report.cuts ?? [];
+const differs = cuts.every(
+  (c) => c.observation?.settled !== report.whole?.settled,
+);
+const displayIsWhatIsPersisted = [report.whole, ...cuts.map((c) => c.observation)]
+  .filter(Boolean)
+  .every((o) => o.text === (o.handed ?? ''));
 
 console.log('');
-console.log(`  whole run reports              : ${whole.finished?.finishReason}`);
-console.log(`  every cut run reports something else: ${distinguishable}`);
-console.log(`  what was streamed === what onFinish was handed: ${displayMatchesSaved}`);
+console.log(`  every cut reports differently from the whole run : ${differs}`);
+console.log(`  what was streamed is what onFinish was handed    : ${displayIsWhatIsPersisted}`);
 console.log('');
 console.log(
-  distinguishable && displayMatchesSaved
+  differs && displayIsWhatIsPersisted
     ? '  No finding. The caller can tell a cut run from a complete one, and the\n' +
         '  text it displayed is the text it was asked to persist.'
     : '  Look closer.',
