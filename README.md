@@ -132,6 +132,15 @@ fixed.
 this library's own summary rather than separate arithmetic, so the numbers above and
 the numbers the tool prints cannot drift apart.
 
+### The same question, asked elsewhere
+
+The AG-UI run above is one protocol. [`probes/`](probes/) asks the same question of
+the Vercel AI SDK and LangGraph JS, with a self-contained script for each that prints
+its own verdict. Both came back clean — the Vercel SDK distinguishes a cut run by
+`finishReason`, and LangGraph's checkpoint stops where an aborted consumer stopped and
+says where to resume. Three asked, one answered wrongly, which is the ratio that makes
+the one worth reporting.
+
 ### What this is not
 
 It is one protocol, cut at event boundaries, and one client at one version:
