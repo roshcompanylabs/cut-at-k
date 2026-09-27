@@ -7,6 +7,14 @@ authors:
     alias: roshcompanylabs
     affiliation: ROSH Company Labs
     website: "https://github.com/roshcompanylabs"
+doi: 10.5281/zenodo.23002965
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23002965
+    description: "Concept DOI — always resolves to the latest version"
+  - type: doi
+    value: 10.5281/zenodo.23002966
+    description: "Version DOI for v0.1.3"
 repository-code: "https://github.com/roshcompanylabs/cut-at-k"
 url: "https://github.com/roshcompanylabs/cut-at-k#readme"
 license: MIT

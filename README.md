@@ -1,5 +1,7 @@
 # cut-at-k
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23002965.svg)](https://doi.org/10.5281/zenodo.23002965)
+
 Cut a stream at every point and check what the consumer is left with.
 
 A stream that stops early is not a rare case. A connection drops, a proxy times out,
