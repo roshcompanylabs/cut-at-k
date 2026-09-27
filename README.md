@@ -136,12 +136,15 @@ the numbers the tool prints cannot drift apart.
 
 ### The same question, asked elsewhere
 
-The AG-UI run above is one protocol. [`probes/`](probes/) asks the same question of
-the Vercel AI SDK and LangGraph JS, with a self-contained script for each that prints
-its own verdict. Both came back clean — the Vercel SDK distinguishes a cut run by
-`finishReason`, and LangGraph's checkpoint stops where an aborted consumer stopped and
-says where to resume. Three asked, one answered wrongly, which is the ratio that makes
-the one worth reporting.
+The AG-UI run above is one protocol. [`probes/`](probes/) asks the same question of the
+Vercel AI SDK, LangGraph JS, Mastra and the OpenAI Node SDK, with a self-contained script
+for each that prints its own verdict and refuses to run against anything but the current
+release. All four came back clean: the Vercel SDK distinguishes a cut run by reporting
+`finishReason: other`, or by raising when no text got through at all; LangGraph's
+checkpoint stops where an aborted consumer stopped and says where to resume; Mastra's
+memory still holds what the consumer was shown; and the OpenAI SDK's final response keeps
+the tool call it streamed and never claims to have completed. Five asked, one answered
+wrongly, which is the ratio that makes the one worth reporting.
 
 ### What this is not
 
