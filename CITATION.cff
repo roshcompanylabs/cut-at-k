@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+title: "cut-at-k: cut a stream at every point and check what the consumer is left with"
+message: "If you use this harness or its figures, please cite it."
+type: software
+authors:
+  - given-names: Redouane
+    alias: roshcompanylabs
+    affiliation: ROSH Company Labs
+    website: "https://github.com/roshcompanylabs"
+repository-code: "https://github.com/roshcompanylabs/cut-at-k"
+url: "https://github.com/roshcompanylabs/cut-at-k#readme"
+license: MIT
+keywords:
+  - streaming
+  - conformance testing
+  - differential testing
+  - server-sent events
+  - truncation
+  - large language models
+abstract: >-
+  A stream that stops early is not a rare case: a proxy times out, a producer
+  dies, someone presses stop. cut-at-k replays an event stream through a client
+  once whole and once for every prefix of it, and asks two questions of each
+  cut. Did the bytes before the cut change — truncation may lose the tail, it
+  must never alter the head. And does the client report the truncated run
+  differently from the complete one. The second is the one that is quiet when it
+  is wrong, which is why a loop finds it where reading the code does not.
+
+  The worked example runs the harness over AG-UI's published conformance corpus
+  through a real HttpAgent over HTTP/SSE. The recording is committed and names
+  the client version that produced it, so every figure re-derives from one
+  command. `probes/` asks the same question of other implementations, and
+  records the ones that answer it correctly as well as the one that does not.
