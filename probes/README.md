@@ -1,4 +1,4 @@
-# The same question, asked of three implementations
+# The same question, asked of four implementations
 
 When a run stops early, can the consumer tell — and does what it was shown still
 agree with what was saved?
@@ -25,9 +25,13 @@ reported, as a string), and anything else you want carried into `lostContent`.
 | **AG-UI** `@ag-ui/client@1.0.0` | the awaited call resolves with what a completed run resolves with | **reported** |
 | **Vercel AI SDK** `ai@6.0.293` | `finishReason` is `other` instead of `stop`, and the text streamed is the text handed to `onFinish` | clean |
 | **LangGraph JS** `@langchain/langgraph@1.4.18` | the checkpoint stops where the consumer stopped, `next` says where to resume, and the call raises | clean |
+| **Mastra** `@mastra/core@1.71.0` | every cut that showed the consumer text still persisted it, and an error part raises | clean |
 
-Three asked, one answered wrongly. That ratio is the point: a harness that finds a
+Four asked, one answered wrongly. That ratio is the point: a harness that finds a
 defect everywhere it looks is measuring itself.
+
+Every probe refuses to run against anything but the current release, which is not
+caution for its own sake — see the Mastra section.
 
 ## AG-UI — the one with the finding
 
@@ -94,6 +98,31 @@ the checkpoint holds all three steps. That is durable execution working as desig
 not a defect: leaving a `for await` is not a cancellation, and treating it as one
 would be the worse bug. It is listed because a reader will otherwise wonder, and
 because the gap between the two is the thing worth knowing.
+
+## Mastra — clean, and the reason every probe checks its version
+
+```bash
+npm install @mastra/core @mastra/memory
+node probes/mastra.mjs
+```
+
+Mastra's memory owns the saving, so a divergence here would be a defect in the thing
+itself rather than in how a caller used it. Every cut that showed the consumer text
+still persisted an assistant message; the two that persisted nothing had shown nothing,
+which is not a loss. An `error` part raises rather than passing silently.
+
+**An earlier run of this probe found the opposite, and it was wrong.** It measured
+`@mastra/core@0.24.9` — published December 2025, 887 versions behind — because
+`npm install @mastra/core` silently resolved there: 1.71.0 declares
+`engines: node >=22.13.0`, the machine was on Node 20, and npm picks the newest version
+your Node satisfies and warns rather than failing. On that build a stream ending with no
+`finish` part persisted nothing, and the finding was written up and two edits from
+being filed. The behaviour was fixed in 1.33.1, nine months before it was "found".
+
+`probes/_versions.mjs` now stops any probe whose install is not the current release. It
+runs before the measurement rather than after, because a measurement of the wrong version
+is not a weaker result, it is not a result — and the version line is the first thing a
+maintainer checks.
 
 ## What these probes are not
 
