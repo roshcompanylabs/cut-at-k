@@ -1,4 +1,4 @@
-# The same question, asked of six implementations
+# The same question, asked of seven implementations
 
 When a run stops early, can the consumer tell — and does what it was shown still
 agree with what was saved?
@@ -28,8 +28,9 @@ reported, as a string), and anything else you want carried into `lostContent`.
 | **Mastra** `@mastra/core@1.71.0` | every cut that showed the consumer text still persisted it, and an error part raises | clean |
 | **OpenAI Node** `openai@7.23.0` | `finalResponse()` still carries the tool call the consumer watched arrive, and `status` never says `completed` | clean |
 | **MCP TypeScript SDK** `@modelcontextprotocol/client@2.1.0` | the response can no longer arrive, and the caller is told only when its own timeout fires | **reported** |
+| **OpenAI Python** `openai==3.19.2` | every cut raises rather than returning something that looks finished — but the call it accumulated is not reachable | clean |
 
-Six asked, four clean. Both of the two that answer wrongly were already reported by
+Seven asked, five clean. Both of the two that answer wrongly were already reported by
 someone else, which is the honest description of what this is for: the contribution
 is the shape of a known defect, not its discovery. A harness that finds something
 new everywhere it looks is measuring itself.
@@ -372,6 +373,50 @@ These are the streams where it does, and AG-UI accepts all three:
   two tool calls open at once              accepted  REJECTED   R_STARTED,R_ERROR,TC_START,TC_ARGS,TC_START,TC_ARGS
   a closed message, then a tool left open  accepted  REJECTED   R_STARTED,TM_START,TM_CONTENT,TM_END,R_ERROR,TC_START,TC_ARGS
 ```
+
+## OpenAI Python — the same question in the language the report is filed in
+
+```bash
+cd probes/python
+uv venv && uv pip install openai
+.venv/Scripts/python openai_python.py     # or .venv/bin/python on Unix
+```
+
+The Node probe above answers for the Node SDK, and an OpenAI maintainer has said as much
+on [openai-node#2571](https://github.com/openai/openai-node/issues/2571), closing it as
+not planned. But [openai-python#3561](https://github.com/openai/openai-python/issues/3561)
+is filed against the Python client, and nobody has measured that one.
+
+```
+  cut  wrote                  saw the call  get_final_response()  calls it gave  accumulated inside
+  1    the response opened    False         RuntimeError          0              in_progress, 0 call(s)
+  2    it is in progress      False         RuntimeError          0              in_progress, 0 call(s)
+  3    a call is starting     True          RuntimeError          0              in_progress, 1 call(s)
+  4    its arguments arrive   True          RuntimeError          0              in_progress, 1 call(s)
+  5    its arguments finish   True          RuntimeError          0              in_progress, 1 call(s)
+  6    the call is done       True          RuntimeError          0              in_progress, 1 call(s)
+  7    the whole stream       True          completed             1              in_progress, 1 call(s)
+```
+
+**Nothing fails silently.** Every cut raises `RuntimeError: Didn't receive a
+'response.completed' event` rather than returning an object that could be mistaken for a
+finished one. On the axis this repo usually measures, the Python client is clean, and
+arguably louder than the Node one.
+
+The difference is on another axis. The SDK **did** accumulate the call — on all four cuts
+that showed one, `status=in_progress` with the `function_call` intact, name and arguments
+and all. It is sitting in `_ResponseStreamState__current_snapshot`, and
+`get_final_response()` is the only public accessor, and it raises. So a caller reconciling
+state after an abort has nothing supported to read.
+
+The Node SDK hands that same snapshot back: `finalResponse()` returns `status: in_progress`
+carrying the call, on exactly the cuts where Python raises. Same accumulation, opposite
+decision about whether the caller may see it.
+
+That distinction is the point for #3561, where the whole difficulty is working out what
+you were left holding after an abort. The probe reads the private attribute once, to
+establish that the data exists rather than is lost — those are different claims and only
+one of them is true here.
 
 ## What these probes are not
 
