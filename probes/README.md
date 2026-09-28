@@ -312,6 +312,67 @@ but on a whole leg the response resolves first and the stream ends a moment late
 that reads the flag the instant `ping` returns reports `false` there and makes the callback
 look selective when it is only later. The first version of this one did exactly that.
 
+## AG-UI a third time — two helpers that disagree about a valid stream
+
+```bash
+npm install @ag-ui/client rxjs
+node probes/ag-ui-compact.mjs
+```
+
+`compactEvents()` buffers a `TOOL_CALL` or `TEXT_MESSAGE` group until its `*_END`, while
+terminal events go straight out, so a group still open when the run ends is flushed after
+the terminal. `verifyEvents()`, from the same package, rejects almost everything once a run
+has closed. The invariant the two owe each other is simple: if `verifyEvents` accepts a
+stream, it must accept `compactEvents(stream)`.
+
+Reported as [ag-ui#2813](https://github.com/ag-ui-protocol/ag-ui/issues/2813) on
+2026-09-22, with the user-visible half at
+[CopilotKit#7368](https://github.com/CopilotKit/CopilotKit/issues/7368) — a thread whose
+transcript never renders again for anyone — and a fix open at
+[#2826](https://github.com/ag-ui-protocol/ag-ui/pull/2826).
+
+Aborting one ordinary run at each point in turn, with the `RUN_ERROR` an abort actually
+emits:
+
+```
+  k   groups open  raw stream  compacted  reordered  what verifyEvents said about the compacted form
+  1   0            accepted    accepted   false      —
+  2   1            accepted    REJECTED   true       Cannot send event type 'TEXT_MESSAGE_START': The run has a
+  3   1            accepted    REJECTED   true       Cannot send event type 'TEXT_MESSAGE_START': The run has a
+  4   1            accepted    REJECTED   true       Cannot send event type 'TEXT_MESSAGE_START': The run has a
+  5   0            accepted    accepted   true       —
+  6   1            accepted    REJECTED   true       Cannot send event type 'TOOL_CALL_START': The run has alre
+  7   1            accepted    REJECTED   true       Cannot send event type 'TOOL_CALL_START': The run has alre
+  8   0            accepted    accepted   true       —
+  9   0            accepted    accepted   true       —
+  10  1            accepted    REJECTED   true       Cannot send event type 'TOOL_CALL_START': The run has alre
+  11  1            accepted    REJECTED   true       Cannot send event type 'TOOL_CALL_START': The run has alre
+```
+
+The `reordered` column is worth a glance: k=5, 8 and 9 are reordered and still accepted.
+Compaction moves closed groups around too, harmlessly. Reordering is not the defect —
+reordering *past a terminal event* is.
+
+Seven of the eleven points break, the raw stream is valid at all eleven, and the seven are
+exactly the seven where a group was open — the same set, no exceptions in either direction.
+
+**The seven is not a rate.** It is a property of the run that was cut: one with groups open
+for longer breaks at more points. The rule is what carries, and the report already states
+the rule. What a sweep adds here is that it holds with no exceptions, and one thing the
+report does not cover.
+
+Every stream above closes each group before opening the next, so only ever one is pending.
+The fix adds a `pendingStreamOrder` list precisely so that several pending groups flush in
+the order they were opened — machinery that does nothing unless more than one is pending.
+These are the streams where it does, and AG-UI accepts all three:
+
+```
+  stream                                   raw       compacted  order after compaction
+  a tool opened while a message is open    accepted  REJECTED   R_STARTED,R_ERROR,TM_START,TM_CONTENT,TC_START,TC_ARGS
+  two tool calls open at once              accepted  REJECTED   R_STARTED,R_ERROR,TC_START,TC_ARGS,TC_START,TC_ARGS
+  a closed message, then a tool left open  accepted  REJECTED   R_STARTED,TM_START,TM_CONTENT,TM_END,R_ERROR,TC_START,TC_ARGS
+```
+
 ## What these probes are not
 
 Each is one library, one version, one shape of cut, driven through the mock the
