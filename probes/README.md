@@ -31,6 +31,10 @@ reported, as a string), and anything else you want carried into `lostContent`.
 Five asked, one answered wrongly. That ratio is the point: a harness that finds a
 defect everywhere it looks is measuring itself.
 
+One probe asks a different question, because the answer to this one turned out to
+depend on something no cut can reach: [the line
+terminator](#ag-ui-again--the-line-terminator-no-cut-can-reach).
+
 Every probe that installs an SDK refuses to run against anything but the current
 release, which is not caution for its own sake — see the Mastra section.
 
@@ -171,6 +175,65 @@ All four cuts that showed the consumer a tool call still had it in `finalRespons
 none of the six reports `completed`, and none throws. The transport is a `fetch` the
 probe supplies, so the frames are exactly the ones listed in the file and no key is
 ever used.
+
+## AG-UI again — the line terminator no cut can reach
+
+```bash
+npm install @ag-ui/client eventsource-parser
+node probes/ag-ui-line-endings.mjs
+```
+
+The SSE grammar in the HTML standard admits three line terminators:
+
+```
+end-of-line = ( cr lf / cr / lf )
+```
+
+So `\r\n\r\n`, `\r\r` and `\n\n` are the same event boundary to a conformant reader.
+This probe holds the events fixed and varies only that, over real HTTP, with
+`eventsource-parser` alongside as a second implementation of the same grammar handed
+the same bytes — the control is not this repo's reading of the standard.
+
+```
+  terminator                  conformant  @ag-ui/client  RUN_FINISHED  threw
+  LF          \n\n            5           5              true          —
+  CRLF        \r\n\r\n        5           0              false         Unexpected non-whitespace character after JSON
+  CR          \r\r            5           0              false         Unexpected non-whitespace character after JSON
+  CRLF field, LF blank        5           5              true          —
+```
+
+These are **complete** streams. Nothing is cut: the run is whole, and under two of the
+three terminators the grammar allows, the client delivers no events at all and the
+awaited call rejects with a JSON parse error.
+
+`sse.ts` on main splits with `buffer.split(/\n\n/)`, so a `\r\n\r\n` boundary is never
+found; the whole response accumulates, and the EOF flush then parses every frame
+concatenated and throws. The docstring above that line reads "Strictly follows the SSE
+standard". A CRLF field line joined by a bare LF blank line does work, which places the
+defect in the boundary alone rather than in the field terminator.
+
+The count does not degrade, it falls off a cliff:
+
+```
+  terminator                  k=1  k=2  k=3  k=4  k=5
+  LF          \n\n            1    2    3    4    5
+  CRLF        \r\n\r\n        1    0    0    0    0
+```
+
+One event is read correctly under every terminator, because with one event there is no
+boundary to miss. The break needs two. A smoke test that sends a single frame passes.
+
+This is why the summary reports the prefix property as broken on those two streams: a
+one-event prefix delivers more than the whole run. That flag is the harness working —
+it says "check this by hand before reporting it", and checking it by hand is what
+produced the table above.
+
+Status: the premise is already accepted in the project's own tracker.
+[ag-ui#2439](https://github.com/ag-ui-protocol/ag-ui/issues/2439) states it — "a stream
+using `\r\n` never completes a frame" — for the community Rust SDK, and
+[#2500](https://github.com/ag-ui-protocol/ag-ui/pull/2500) fixes it there. The
+TypeScript client has taken the other half of #2439, a 10 MB `MAX_BUFFER_SIZE` cap, and
+not this half. `sse.test.ts` has fifteen tests and no case containing a carriage return.
 
 ## What these probes are not
 
