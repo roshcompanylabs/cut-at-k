@@ -428,6 +428,27 @@ returns the terminal event's authoritative output instead, where the item does r
 one field that separates a call that already finished from one still mid-arguments is the
 one field it does not carry.
 
+The probe finishes by putting exactly those two calls side by side — the first has had its
+`output_item.done`, the second is still mid-arguments at the cut:
+
+```
+    order  call_id   name      status        arguments
+    0      call_ABC  transfer  in_progress   '{"amount":50000}'
+    1      call_DEF  search    in_progress   '{"q":"ra'
+
+    get_final_response(): RuntimeError
+    both kept, in order, with distinct call_id : True
+    call_ids that received output_item.done  : ['call_ABC']
+    their status fields are indistinguishable : True
+```
+
+The `output_item.done` line is read out of the event list rather than asserted, so the
+contradiction is visible in one place: `call_ABC` got its terminal item event, `call_DEF`
+did not, and the field that should record the difference reads the same for both.
+
+Both survive the cut with their own `call_id`, in order, arguments included down to the
+half-written ones. Only the field that would tell them apart is the same for both.
+
 ## What these probes are not
 
 Each is one library, one version, one shape of cut, driven through the mock the

@@ -204,6 +204,82 @@ def replay(prefix: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+SECOND_CALL: dict[str, Any] = {
+    "id": "fc_2",
+    "type": "function_call",
+    "call_id": "call_DEF",
+    "name": "search",
+    "arguments": '{"q":"rate"}',
+    "status": "completed",
+}
+
+# The shape the reconciliation design keys on: one call already terminal, a second
+# still mid-arguments when the stream stops. Idempotency has to tell them apart.
+TWO_CALLS: list[dict[str, Any]] = EVENTS[:6] + [
+    {
+        "type": "response.output_item.added",
+        "item": {**SECOND_CALL, "arguments": "", "status": "in_progress"},
+        "output_index": 1,
+        "sequence_number": 6,
+    },
+    {
+        "type": "response.function_call_arguments.delta",
+        "item_id": "fc_2",
+        "output_index": 1,
+        "delta": '{"q":"ra',
+        "sequence_number": 7,
+    },
+]
+
+
+def two_calls_in_flight() -> None:
+    """One call terminal, one still arriving, cut there."""
+    client = OpenAI(
+        api_key="probe",
+        http_client=httpx2.Client(
+            transport=httpx2.MockTransport(transport_for(TWO_CALLS))
+        ),
+    )
+    with client.responses.stream(model="m", input="hi") as stream:
+        for _ in stream:
+            pass
+        state = getattr(stream, "_state", None)
+        snap = getattr(state, "_ResponseStreamState__current_snapshot", None)
+        items = [o for o in (getattr(snap, "output", None) or [])
+                 if getattr(o, "type", None) == "function_call"]
+
+        print()
+        print("  two calls in flight, cut while the second is mid-arguments")
+        print()
+        print("    order  call_id   name      status        arguments")
+        for i, o in enumerate(items):
+            print(
+                f"    {i:<7}{getattr(o, 'call_id', None) or '-':<10}"
+                f"{getattr(o, 'name', None) or '-':<10}"
+                f"{getattr(o, 'status', None) or '-':<14}{getattr(o, 'arguments', None)!r}"
+            )
+        try:
+            stream.get_final_response()
+            print("\n    get_final_response(): returned")
+        except Exception as exc:  # noqa: BLE001
+            print(f"\n    get_final_response(): {type(exc).__name__}")
+
+    # Derived from the events, not asserted: which call_ids were carried by an
+    # output_item.done before the cut.
+    sent_terminal = {
+        e["item"]["call_id"]
+        for e in TWO_CALLS
+        if e["type"] == "response.output_item.done"
+    }
+    same_status = len({getattr(o, "status", None) for o in items}) == 1
+    print(
+        f"    both kept, in order, with distinct call_id : "
+        f"{len(items) == 2 and len({getattr(o, 'call_id', None) for o in items}) == 2}"
+    )
+    print(f"    call_ids that received output_item.done  : {sorted(sent_terminal)}")
+    print(f"    their status fields are indistinguishable : {same_status}")
+
+
 def main() -> int:
     require_latest("openai")
 
@@ -247,6 +323,7 @@ def main() -> int:
         print("  `get_final_response()` is the only public accessor, which raises. A caller")
         print("  reconciling state after an abort has nothing supported to read.")
         print("  The Node SDK hands that same snapshot back; see probes/openai-node.mjs.")
+    two_calls_in_flight()
     return 0
 
 
