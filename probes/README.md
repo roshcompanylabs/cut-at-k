@@ -389,13 +389,13 @@ is filed against the Python client, and nobody has measured that one.
 
 ```
   cut  wrote                  saw the call  get_final_response()  calls it gave  accumulated inside
-  1    the response opened    False         RuntimeError          0              in_progress, 0 call(s)
-  2    it is in progress      False         RuntimeError          0              in_progress, 0 call(s)
-  3    a call is starting     True          RuntimeError          0              in_progress, 1 call(s)
-  4    its arguments arrive   True          RuntimeError          0              in_progress, 1 call(s)
-  5    its arguments finish   True          RuntimeError          0              in_progress, 1 call(s)
-  6    the call is done       True          RuntimeError          0              in_progress, 1 call(s)
-  7    the whole stream       True          completed             1              in_progress, 1 call(s)
+  1    the response opened    False         RuntimeError          0              0 call(s) - status=-
+  2    it is in progress      False         RuntimeError          0              0 call(s) - status=-
+  3    a call is starting     True          RuntimeError          0              1 call(s) call_ABC status=in_progress
+  4    its arguments arrive   True          RuntimeError          0              1 call(s) call_ABC status=in_progress
+  5    its arguments finish   True          RuntimeError          0              1 call(s) call_ABC status=in_progress
+  6    the call is done       True          RuntimeError          0              1 call(s) call_ABC status=in_progress
+  7    the whole stream       True          completed             1              1 call(s) call_ABC status=in_progress
 ```
 
 **Nothing fails silently.** Every cut raises `RuntimeError: Didn't receive a
@@ -417,6 +417,16 @@ That distinction is the point for #3561, where the whole difficulty is working o
 you were left holding after an abort. The probe reads the private attribute once, to
 establish that the data exists rather than is lost — those are different claims and only
 one of them is true here.
+
+**One field in that snapshot is not what it looks like.** Every row above reads
+`status=in_progress`, including cut 6, which arrived *after* `response.output_item.done`
+carried `status: "completed"` for that item — and including the whole stream. The
+snapshot's per-item status reflects `output_item.added` and is never updated by
+`output_item.done`. On a complete run that is invisible, because `get_final_response()`
+returns the terminal event's authoritative output instead, where the item does read
+`completed`. On a cut there is no terminal event, so the snapshot is all there is, and the
+one field that separates a call that already finished from one still mid-arguments is the
+one field it does not carry.
 
 ## What these probes are not
 

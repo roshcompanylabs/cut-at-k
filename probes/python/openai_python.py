@@ -59,7 +59,7 @@ def require_latest(package: str) -> str:
         )
         raise SystemExit(1)
 
-    print(f"{package}=={installed}  ·  python {sys.version.split()[0]}\n")
+    print(f"{package}=={installed}  |  python {sys.version.split()[0]}\n")
     return installed
 
 
@@ -161,6 +161,8 @@ def replay(prefix: list[dict[str, Any]]) -> dict[str, Any]:
     threw = None
     snapshot_calls = 0
     snapshot_status = None
+    snapshot_ids: list[str | None] = []
+    snapshot_item_status: list[str | None] = []
 
     try:
         with client.responses.stream(model="m", input="hi") as stream:
@@ -175,10 +177,12 @@ def replay(prefix: list[dict[str, Any]]) -> dict[str, Any]:
             snap = getattr(state, "_ResponseStreamState__current_snapshot", None)
             if snap is not None:
                 snapshot_status = getattr(snap, "status", None)
-                snapshot_calls = len(
-                    [o for o in (getattr(snap, "output", None) or [])
-                     if getattr(o, "type", None) == "function_call"]
-                )
+                items = [o for o in (getattr(snap, "output", None) or [])
+                         if getattr(o, "type", None) == "function_call"]
+                snapshot_calls = len(items)
+                # The fields a caller reconciling after an abort would key on.
+                snapshot_ids = [getattr(o, "call_id", None) for o in items]
+                snapshot_item_status = [getattr(o, "status", None) for o in items]
 
             final = stream.get_final_response()
     except Exception as exc:  # noqa: BLE001 - the probe reports whatever surfaced
@@ -194,6 +198,8 @@ def replay(prefix: list[dict[str, Any]]) -> dict[str, Any]:
         "status": getattr(final, "status", None),
         "snapshot_calls": snapshot_calls,
         "snapshot_status": snapshot_status,
+        "snapshot_ids": snapshot_ids,
+        "snapshot_item_status": snapshot_item_status,
         "threw": threw,
     }
 
@@ -207,8 +213,10 @@ def main() -> int:
 
     print("  cut  wrote                  saw the call  get_final_response()  calls it gave  accumulated inside")
     for k, o in rows:
-        gave = o["threw"] or (o["status"] or "—")
-        inside = f"{o['snapshot_status'] or '—'}, {o['snapshot_calls']} call(s)"
+        gave = o["threw"] or (o["status"] or "-")
+        ids = ",".join(i or "?" for i in o["snapshot_ids"]) or "-"
+        st = ",".join(i or "?" for i in o["snapshot_item_status"]) or "-"
+        inside = f"{o['snapshot_calls']} call(s) {ids} status={st}"
         print(
             f"  {str(k):<5}{WROTE[k]:<23}{str(o['saw_call']):<14}{gave:<22}"
             f"{str(o['kept_calls']):<15}{inside}"
@@ -235,7 +243,7 @@ def main() -> int:
     if held_inside and not gave_back:
         print()
         print("  The gap is not loss, it is reach. The SDK accumulated the call on every cut")
-        print("  that showed one — it is sitting in a name-mangled private attribute — and")
+        print("  that showed one - it is sitting in a name-mangled private attribute - and")
         print("  `get_final_response()` is the only public accessor, which raises. A caller")
         print("  reconciling state after an abort has nothing supported to read.")
         print("  The Node SDK hands that same snapshot back; see probes/openai-node.mjs.")
