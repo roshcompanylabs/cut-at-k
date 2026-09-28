@@ -1,4 +1,4 @@
-# The same question, asked of five implementations
+# The same question, asked of six implementations
 
 When a run stops early, can the consumer tell — and does what it was shown still
 agree with what was saved?
@@ -27,9 +27,12 @@ reported, as a string), and anything else you want carried into `lostContent`.
 | **LangGraph JS** `@langchain/langgraph@1.4.18` | the checkpoint stops where the consumer stopped, `next` says where to resume, and the call raises | clean |
 | **Mastra** `@mastra/core@1.71.0` | every cut that showed the consumer text still persisted it, and an error part raises | clean |
 | **OpenAI Node** `openai@7.23.0` | `finalResponse()` still carries the tool call the consumer watched arrive, and `status` never says `completed` | clean |
+| **MCP TypeScript SDK** `@modelcontextprotocol/client@2.1.0` | the response can no longer arrive, and the caller is told only when its own timeout fires | **reported** |
 
-Five asked, one answered wrongly. That ratio is the point: a harness that finds a
-defect everywhere it looks is measuring itself.
+Six asked, four clean. Both of the two that answer wrongly were already reported by
+someone else, which is the honest description of what this is for: the contribution
+is the shape of a known defect, not its discovery. A harness that finds something
+new everywhere it looks is measuring itself.
 
 One probe asks a different question, because the answer to this one turned out to
 depend on something no cut can reach: [the line
@@ -234,6 +237,80 @@ using `\r\n` never completes a frame" — for the community Rust SDK, and
 [#2500](https://github.com/ag-ui-protocol/ag-ui/pull/2500) fixes it there. The
 TypeScript client has taken the other half of #2439, a 10 MB `MAX_BUFFER_SIZE` cap, and
 not this half. `sse.test.ts` has fifteen tests and no case containing a carriage return.
+
+## MCP TypeScript SDK — reported, and the fix holds
+
+```bash
+npm install @modelcontextprotocol/client
+node probes/mcp-streamable-http.mjs
+```
+
+A Streamable HTTP request can get a `text/event-stream` body back, and that leg is the
+only place the matching JSON-RPC response can arrive. If it ends first, the response is
+never coming. On `@modelcontextprotocol/client@2.1.0`, with a 400 ms timeout:
+
+```
+  k  written                      notifications seen     settled            ms    told promptly  caller callback
+  1  a comment frame              —                      REQUEST_TIMEOUT    403   false          false
+  2  an unrelated notification    notifications/message  REQUEST_TIMEOUT    406   false          false
+  3  half of the response frame   notifications/message  REQUEST_TIMEOUT    402   false          false
+  4  the whole response frame     notifications/message  resolved           8     true           false
+```
+
+One run. The millisecond figures move by a few either way; the 400 ms wall does not.
+
+Reported as
+[typescript-sdk#2739](https://github.com/modelcontextprotocol/typescript-sdk/issues/2739)
+on 2026-08-30, with a fix open at
+[#2830](https://github.com/modelcontextprotocol/typescript-sdk/pull/2830) — eighteen
+lines threading the transport's existing `onRequestStreamEnd` into the request funnel.
+
+**The summary prints zero lost, and that is right.** Every cut reports differently from
+the whole run, so a caller can tell a dead leg from a live one. The defect is on the
+other axis: *when*. That is the one case where reading only the summary would miss the
+finding, which is why this probe carries a millisecond column and writes `lostContent`
+against lateness.
+
+What the issue's own reproduction tests is an errored body and a clean EOF with no frames
+at all. Cutting at every point adds the rest, and two of those cells are worth having:
+a leg that delivered real traffic first (k=2), and a leg that died inside the only frame
+that mattered (k=3). Both behave the same as the empty leg, which is the useful answer —
+partial progress does not change the outcome.
+
+Running the same probe against the build that PR publishes:
+
+```bash
+npm i https://pkg.pr.new/@modelcontextprotocol/client@2830
+```
+
+```
+  k  written                      notifications seen     settled            ms    told promptly  caller callback
+  1  a comment frame              —                      CONNECTION_CLOSED  3     true           true
+  2  an unrelated notification    notifications/message  CONNECTION_CLOSED  2     true           true
+  3  half of the response frame   notifications/message  CONNECTION_CLOSED  1     true           true
+  4  the whole response frame     notifications/message  resolved           7     true           true
+```
+
+That build reports `@modelcontextprotocol/client@2.0.0`, so it is compared against `2.0.0`
+from npm and the eighteen lines are the only difference. Comparing it against `2.1.0`
+instead — which is what a first attempt did — mixes in a release's worth of other changes
+and is not a differential at all, however much the numbers happen to agree.
+
+It settles promptly at every cut, and k=4 still resolves, which is the case the fix must
+*not* fire on: the response arrived, the server then closed the leg as it always does, and
+the `responseReceived` guard inside `cancel` holds.
+
+One thing the fix does that neither the issue nor the PR description mentions: the caller's
+own `onRequestStreamEnd` never fired at all before it — `false` on every row of the
+published release, including the successful one, because `Protocol.request` never forwarded
+the option. The same eighteen lines make a documented public option work for the first
+time. It fires on success too, since a leg that delivered a response still ends, and that
+is worth knowing before using it as a loss signal.
+
+Reading that column takes care: on a cut leg the callback fires before the request settles,
+but on a whole leg the response resolves first and the stream ends a moment later. A probe
+that reads the flag the instant `ping` returns reports `false` there and makes the callback
+look selective when it is only later. The first version of this one did exactly that.
 
 ## What these probes are not
 

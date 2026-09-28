@@ -137,14 +137,22 @@ the numbers the tool prints cannot drift apart.
 ### The same question, asked elsewhere
 
 The AG-UI run above is one protocol. [`probes/`](probes/) asks the same question of the
-Vercel AI SDK, LangGraph JS, Mastra and the OpenAI Node SDK, with a self-contained script
-for each that prints its own verdict and refuses to run against anything but the current
-release. All four came back clean: the Vercel SDK distinguishes a cut run by reporting
+Vercel AI SDK, LangGraph JS, Mastra, the OpenAI Node SDK and the MCP TypeScript SDK, with
+a self-contained script for each that prints its own verdict and refuses to run against
+anything but the current release.
+
+Four came back clean: the Vercel SDK distinguishes a cut run by reporting
 `finishReason: other`, or by raising when no text got through at all; LangGraph's
 checkpoint stops where an aborted consumer stopped and says where to resume; Mastra's
 memory still holds what the consumer was shown; and the OpenAI SDK's final response keeps
-the tool call it streamed and never claims to have completed. Five asked, one answered
-wrongly, which is the ratio that makes the one worth reporting.
+the tool call it streamed and never claims to have completed.
+
+The MCP SDK did not, and it was already reported: when the response leg of a POST dies,
+the request waits out its whole timeout before the caller is told, at every cut point
+including one where half the response had arrived. Six asked, four clean — and both of
+the two that answer wrongly were found by someone else first, which is the honest account
+of what this is. The harness supplies the shape of a known defect, and occasionally
+[a false positive in the fix](https://github.com/ag-ui-protocol/ag-ui/pull/2354#issuecomment-5849020368).
 
 ### What this is not
 
