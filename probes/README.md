@@ -28,7 +28,7 @@ reported, as a string), and anything else you want carried into `lostContent`.
 | **Mastra** `@mastra/core@1.71.0` | every cut that showed the consumer text still persisted it, and an error part raises | clean |
 | **OpenAI Node** `openai@7.23.0` | `finalResponse()` still carries the tool call the consumer watched arrive, and `status` never says `completed` | clean |
 | **MCP TypeScript SDK** `@modelcontextprotocol/client@2.1.0` | the response can no longer arrive, and the caller is told only when its own timeout fires | **reported** |
-| **OpenAI Python** `openai==3.19.2` | every cut raises rather than returning something that looks finished — but the call it accumulated is not reachable | clean |
+| **OpenAI Python** `openai==3.22.1` | every cut raises rather than returning something that looks finished — but the call it accumulated is not reachable | clean |
 
 Seven asked, five clean. Both of the two that answer wrongly were already reported by
 someone else, which is the honest description of what this is for: the contribution
@@ -448,6 +448,52 @@ did not, and the field that should record the difference reads the same for both
 
 Both survive the cut with their own `call_id`, in order, arguments included down to the
 half-written ones. Only the field that would tell them apart is the same for both.
+
+## AG-UI, below the frame — the parser rather than the state machine
+
+```bash
+npm install @ag-ui/client rxjs
+node probes/ag-ui-bytes.mjs
+```
+
+Every probe above severs *between* events, which tests the state machine: does the consumer
+handle a run that stopped after three events rather than nine. This one severs *inside the
+bytes*, which tests the parser underneath — a cut in the middle of a UTF-8 sequence, between
+`data:` and its newline, or halfway through a JSON payload. They are different targets, and
+a defect found in one says nothing about the other.
+
+`severAtEveryByte` has been in `src/` since the start and no probe used it until someone
+[asked](https://dev.to/roshcompanylabs/i-cut-six-streaming-sdks-at-every-point-nothing-i-found-was-new-2pbo)
+whether the harness went below event boundaries. `seams()` picks the offsets rather than
+sweeping all of them, because most bytes of a frame are unremarkable and the ones that break
+things sit at structural marks. The run body is deliberately non-ASCII so a cut can land
+mid-character:
+
+```
+  396 bytes, 124 seams worth cutting at
+
+  where the cut landed        cuts  reported like the whole run  raised  saw RUN_FINISHED
+  after a field colon         23    0                            23      0
+  just inside an object       6     0                            6       0
+  just inside a string        68    0                            68      0
+  after a comma               12    0                            12      0
+  between frame newlines      6     1                            0       1
+  mid-UTF-8 sequence          9     0                            9       0
+
+  cuts that report the same as the whole run: 1 of 124
+  of those, with no terminal event          : 0
+    @395 of 396  (between frame newlines)  (the body minus its trailing newline)
+```
+
+**No finding**, and the single row that reports like the whole run is the cut at byte 395 of
+396 — the body minus its final newline, with all six frames intact. It is the whole run by
+another name.
+
+That is worth putting next to the CRLF result above, because together they draw the line the
+question was about. Cut the bytes anywhere inside a frame and the parser refuses, including
+all nine cuts that split an Arabic character in half. Keep every frame intact and change only
+the byte that separates them, and it accepts nothing at all. The buffering is sound; what is
+missing is that `\r\n\r\n` is a boundary.
 
 ## What these probes are not
 
