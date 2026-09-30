@@ -137,22 +137,45 @@ the numbers the tool prints cannot drift apart.
 ### The same question, asked elsewhere
 
 The AG-UI run above is one protocol. [`probes/`](probes/) asks the same question of the
-Vercel AI SDK, LangGraph JS, Mastra, the OpenAI Node SDK and the MCP TypeScript SDK, with
+Vercel AI SDK, LangGraph JS, Mastra, the OpenAI Node and Python SDKs and the MCP
+TypeScript SDK, with
 a self-contained script for each that prints its own verdict and refuses to run against
 anything but the current release.
 
-Four came back clean: the Vercel SDK distinguishes a cut run by reporting
+Five came back clean: the Vercel SDK distinguishes a cut run by reporting
 `finishReason: other`, or by raising when no text got through at all; LangGraph's
 checkpoint stops where an aborted consumer stopped and says where to resume; Mastra's
-memory still holds what the consumer was shown; and the OpenAI SDK's final response keeps
-the tool call it streamed and never claims to have completed.
+memory still holds what the consumer was shown; the OpenAI Node SDK's final response keeps
+the tool call it streamed and never claims to have completed; and the OpenAI Python SDK
+raises at every cut rather than returning something that looks finished.
 
 The MCP SDK did not, and it was already reported: when the response leg of a POST dies,
 the request waits out its whole timeout before the caller is told, at every cut point
-including one where half the response had arrived. Six asked, four clean — and both of
+including one where half the response had arrived. Seven asked, five clean — and both of
 the two that answer wrongly were found by someone else first, which is the honest account
 of what this is. The harness supplies the shape of a known defect, and occasionally
 [a false positive in the fix](https://github.com/ag-ui-protocol/ag-ui/pull/2354#issuecomment-5849020368).
+
+### Not the same question as `chunk-invariance`
+
+[`chunk-invariance`](https://www.npmjs.com/package/chunk-invariance) asks something that
+sounds like this one and is not. It varies **where the boundaries fall in a stream that
+arrives in full**, and requires a filter's concatenated streamed output to equal its
+whole-input output. This harness never moves a boundary. It **removes the tail**, and asks
+what the consumer is left with and whether it can tell.
+
+They therefore catch different things. `chunk-invariance` catches a filter that acts on a
+chunk before the value inside it is finished, and names the smallest split that breaks it.
+It cannot catch a client that reports a run which stopped halfway as one that finished,
+because in its world nothing ever stops halfway. This harness cannot catch the filter bug,
+because every cut it makes is also an ending — it never delivers the rest, so a boundary
+that a complete stream would have recovered from is a case it never produces.
+
+Its own README draws the line from the other side: "It tests a filter you can call
+in-process. It does not test a running gateway, where the chunks are decided by an upstream
+model, a network and an SSE parser."
+
+If you stream user-visible text through a filter, you want both.
 
 ### What this is not
 
@@ -160,8 +183,11 @@ It is one protocol, cut at event boundaries, and one client at one version:
 `@ag-ui/client@1.0.0`. The figures move with the client, so the version is part of the
 result rather than a footnote — replaying the same corpus through `0.0.58` gives
 141/49/47/31, because that older client rejects four fixtures this one parses. Cutting inside
-a frame — mid-UTF-8 sequence, mid-SSE frame, mid tool-call JSON — is not covered yet
-and is where the more interesting failures probably live. Other frameworks have no
+a frame — mid-UTF-8 sequence, mid-SSE frame, mid tool-call JSON — is covered for a single
+body by [`probes/ag-ui-bytes.mjs`](probes/ag-ui-bytes.mjs), and it found nothing: of 124
+seams exactly one reports what the whole body reports, and that one is byte 395 of 396, the
+body minus its trailing newline, with every frame intact. It is not covered for the corpus
+above, which is cut at event boundaries only. Other frameworks have no
 validator of their own to use as an oracle, so for those the harness would have to
 assert its own expectation, which is weaker evidence.
 
