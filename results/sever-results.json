@@ -1,7 +1,7 @@
 {
  "client": {
   "name": "@ag-ui/client",
-  "version": "1.0.0"
+  "version": "1.0.2"
  },
  "rows": [
   {
@@ -201,7 +201,7 @@
    "cutMessagesCount": 0,
    "cutMessagesContentOnly": "",
    "cutMessagesJson": "[]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT",
    "wholeErrSettled": "{\"error\":\"Cannot continue text message 'chunk-role-m1': chunk role 'assistant' does not match the open stream's role 'user'.\"}",
    "wholeThrew": "Cannot continue text message 'chunk-role-m1': chunk role 'assistant' does not match the open stream's role 'user'."
   },
@@ -215,7 +215,7 @@
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "opened as a user message",
    "cutMessagesJson": "[{\"id\":\"chunk-role-m1\",\"role\":\"user\",\"content\":\"opened as a user message\"}]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT",
    "wholeErrSettled": "{\"error\":\"Cannot continue text message 'chunk-role-m1': chunk role 'assistant' does not match the open stream's role 'user'.\"}",
    "wholeThrew": "Cannot continue text message 'chunk-role-m1': chunk role 'assistant' does not match the open stream's role 'user'."
   },
@@ -224,9 +224,9 @@
    "k": 3,
    "of": 4,
    "threw": "Cannot continue text message 'chunk-role-m1': chunk role 'assistant' does not match the open stream's role 'user'.",
-   "cutDelivered": "RUN_STARTED",
+   "cutDelivered": "RUN_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT",
    "cutErrSettled": "{\"error\":\"Cannot continue text message 'chunk-role-m1': chunk role 'assistant' does not match the open stream's role 'user'.\"}",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT",
    "wholeErrSettled": "{\"error\":\"Cannot continue text message 'chunk-role-m1': chunk role 'assistant' does not match the open stream's role 'user'.\"}",
    "wholeThrew": "Cannot continue text message 'chunk-role-m1': chunk role 'assistant' does not match the open stream's role 'user'."
   },
@@ -240,7 +240,7 @@
    "cutMessagesCount": 0,
    "cutMessagesContentOnly": "",
    "cutMessagesJson": "[]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TOOL_CALL_START TOOL_CALL_ARGS",
    "wholeErrSettled": "{\"error\":\"Cannot continue tool call 'chunk-tool-name-tc1': chunk toolCallName 'delete' does not match the open stream's toolCallName 'search'.\"}",
    "wholeThrew": "Cannot continue tool call 'chunk-tool-name-tc1': chunk toolCallName 'delete' does not match the open stream's toolCallName 'search'."
   },
@@ -254,7 +254,7 @@
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "null",
    "cutMessagesJson": "[{\"id\":\"chunk-tool-name-tc1\",\"role\":\"assistant\",\"toolCalls\":[{\"id\":\"chunk-tool-name-tc1\",\"type\":\"function\",\"function\":{\"name\":\"search\",\"arguments\":\"{\\\"q\\\":\"}}]}]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TOOL_CALL_START TOOL_CALL_ARGS",
    "wholeErrSettled": "{\"error\":\"Cannot continue tool call 'chunk-tool-name-tc1': chunk toolCallName 'delete' does not match the open stream's toolCallName 'search'.\"}",
    "wholeThrew": "Cannot continue tool call 'chunk-tool-name-tc1': chunk toolCallName 'delete' does not match the open stream's toolCallName 'search'."
   },
@@ -263,9 +263,9 @@
    "k": 3,
    "of": 4,
    "threw": "Cannot continue tool call 'chunk-tool-name-tc1': chunk toolCallName 'delete' does not match the open stream's toolCallName 'search'.",
-   "cutDelivered": "RUN_STARTED",
+   "cutDelivered": "RUN_STARTED TOOL_CALL_START TOOL_CALL_ARGS",
    "cutErrSettled": "{\"error\":\"Cannot continue tool call 'chunk-tool-name-tc1': chunk toolCallName 'delete' does not match the open stream's toolCallName 'search'.\"}",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TOOL_CALL_START TOOL_CALL_ARGS",
    "wholeErrSettled": "{\"error\":\"Cannot continue tool call 'chunk-tool-name-tc1': chunk toolCallName 'delete' does not match the open stream's toolCallName 'search'.\"}",
    "wholeThrew": "Cannot continue tool call 'chunk-tool-name-tc1': chunk toolCallName 'delete' does not match the open stream's toolCallName 'search'."
   },
@@ -610,7 +610,7 @@
    "cutMessagesCount": 0,
    "cutMessagesContentOnly": "",
    "cutMessagesJson": "[]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END CUSTOM",
    "wholeErrSettled": "{\"error\":\"First TEXT_MESSAGE_CHUNK must have a messageId\"}",
    "wholeThrew": "First TEXT_MESSAGE_CHUNK must have a messageId"
   },
@@ -624,7 +624,7 @@
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "Half ",
    "cutMessagesJson": "[{\"id\":\"custom-closes-m1\",\"role\":\"assistant\",\"content\":\"Half \"}]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END CUSTOM",
    "wholeErrSettled": "{\"error\":\"First TEXT_MESSAGE_CHUNK must have a messageId\"}",
    "wholeThrew": "First TEXT_MESSAGE_CHUNK must have a messageId"
   },
@@ -638,7 +638,7 @@
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "Half ",
    "cutMessagesJson": "[{\"id\":\"custom-closes-m1\",\"role\":\"assistant\",\"content\":\"Half \"}]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END CUSTOM",
    "wholeErrSettled": "{\"error\":\"First TEXT_MESSAGE_CHUNK must have a messageId\"}",
    "wholeThrew": "First TEXT_MESSAGE_CHUNK must have a messageId"
   },
@@ -647,9 +647,9 @@
    "k": 4,
    "of": 5,
    "threw": "First TEXT_MESSAGE_CHUNK must have a messageId",
-   "cutDelivered": "RUN_STARTED",
+   "cutDelivered": "RUN_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END CUSTOM",
    "cutErrSettled": "{\"error\":\"First TEXT_MESSAGE_CHUNK must have a messageId\"}",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END CUSTOM",
    "wholeErrSettled": "{\"error\":\"First TEXT_MESSAGE_CHUNK must have a messageId\"}",
    "wholeThrew": "First TEXT_MESSAGE_CHUNK must have a messageId"
   },
@@ -821,7 +821,7 @@
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"f2ecadac-b598-4ad4-a715-268b6b8ef9b4\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -838,7 +838,7 @@
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"f2ecadac-b598-4ad4-a715-268b6b8ef9b4\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -849,13 +849,13 @@
    "cutMessages": "reasoning:",
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "",
-   "cutMessagesJson": "[{\"id\":\"982cc4a1-d6bb-4e41-aee4-142c44a626dc\",\"role\":\"reasoning\",\"content\":\"\"}]",
+   "cutMessagesJson": "[{\"id\":\"c97b5eb1-4ae1-4c8a-9c64-3aa9e7ecce90\",\"role\":\"reasoning\",\"content\":\"\"}]",
    "wholeDelivered": "RUN_STARTED REASONING_START REASONING_MESSAGE_START REASONING_MESSAGE_CONTENT REASONING_MESSAGE_END REASONING_END TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END RUN_FINISHED",
    "wholeSettled": "{\"result\":null,\"newMessages\":2}",
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"f2ecadac-b598-4ad4-a715-268b6b8ef9b4\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -866,13 +866,13 @@
    "cutMessages": "reasoning:Let me check.",
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "Let me check.",
-   "cutMessagesJson": "[{\"id\":\"bbf406ed-71b2-4d36-8598-63068d7c4d61\",\"role\":\"reasoning\",\"content\":\"Let me check.\"}]",
+   "cutMessagesJson": "[{\"id\":\"67409dc5-ad2e-408f-a3b1-8dd015705873\",\"role\":\"reasoning\",\"content\":\"Let me check.\"}]",
    "wholeDelivered": "RUN_STARTED REASONING_START REASONING_MESSAGE_START REASONING_MESSAGE_CONTENT REASONING_MESSAGE_END REASONING_END TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END RUN_FINISHED",
    "wholeSettled": "{\"result\":null,\"newMessages\":2}",
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"f2ecadac-b598-4ad4-a715-268b6b8ef9b4\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -883,13 +883,13 @@
    "cutMessages": "reasoning:Let me check.",
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "Let me check.",
-   "cutMessagesJson": "[{\"id\":\"71dbfb22-7fef-42a3-b4f1-27b895858747\",\"role\":\"reasoning\",\"content\":\"Let me check.\"}]",
+   "cutMessagesJson": "[{\"id\":\"44cc61bf-8177-4495-9f5b-bdc8fef85d4c\",\"role\":\"reasoning\",\"content\":\"Let me check.\"}]",
    "wholeDelivered": "RUN_STARTED REASONING_START REASONING_MESSAGE_START REASONING_MESSAGE_CONTENT REASONING_MESSAGE_END REASONING_END TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END RUN_FINISHED",
    "wholeSettled": "{\"result\":null,\"newMessages\":2}",
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"f2ecadac-b598-4ad4-a715-268b6b8ef9b4\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -900,13 +900,13 @@
    "cutMessages": "reasoning:Let me check.",
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "Let me check.",
-   "cutMessagesJson": "[{\"id\":\"32b14f8b-b9a9-479d-87ff-eefb7794ed58\",\"role\":\"reasoning\",\"content\":\"Let me check.\"}]",
+   "cutMessagesJson": "[{\"id\":\"2dba2f69-e5e5-4516-bba9-c496faa6df66\",\"role\":\"reasoning\",\"content\":\"Let me check.\"}]",
    "wholeDelivered": "RUN_STARTED REASONING_START REASONING_MESSAGE_START REASONING_MESSAGE_CONTENT REASONING_MESSAGE_END REASONING_END TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END RUN_FINISHED",
    "wholeSettled": "{\"result\":null,\"newMessages\":2}",
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"f2ecadac-b598-4ad4-a715-268b6b8ef9b4\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -917,13 +917,13 @@
    "cutMessages": "reasoning:Let me check.\u0001assistant:",
    "cutMessagesCount": 2,
    "cutMessagesContentOnly": "Let me check.\u0001",
-   "cutMessagesJson": "[{\"id\":\"517d746e-90a2-4f2b-a9ab-b67f417f1fa1\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"\"}]",
+   "cutMessagesJson": "[{\"id\":\"e968a941-8d65-494b-9bc7-9c1a21ed5f76\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"\"}]",
    "wholeDelivered": "RUN_STARTED REASONING_START REASONING_MESSAGE_START REASONING_MESSAGE_CONTENT REASONING_MESSAGE_END REASONING_END TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END RUN_FINISHED",
    "wholeSettled": "{\"result\":null,\"newMessages\":2}",
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"f2ecadac-b598-4ad4-a715-268b6b8ef9b4\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -934,13 +934,13 @@
    "cutMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "cutMessagesCount": 2,
    "cutMessagesContentOnly": "Let me check.\u0001Checked.",
-   "cutMessagesJson": "[{\"id\":\"2c1bea1e-769d-4568-8925-a231053d19a5\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]",
+   "cutMessagesJson": "[{\"id\":\"6d5b0701-1db7-4f18-9b86-86fa139bfb90\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]",
    "wholeDelivered": "RUN_STARTED REASONING_START REASONING_MESSAGE_START REASONING_MESSAGE_CONTENT REASONING_MESSAGE_END REASONING_END TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END RUN_FINISHED",
    "wholeSettled": "{\"result\":null,\"newMessages\":2}",
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"f2ecadac-b598-4ad4-a715-268b6b8ef9b4\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-45-thinking-translated",
@@ -951,13 +951,13 @@
    "cutMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "cutMessagesCount": 2,
    "cutMessagesContentOnly": "Let me check.\u0001Checked.",
-   "cutMessagesJson": "[{\"id\":\"47127635-ebf9-4ed2-8912-fa06aac11e12\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]",
+   "cutMessagesJson": "[{\"id\":\"d6cb82b4-4bb0-4514-b40c-1d7bcccda5ba\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]",
    "wholeDelivered": "RUN_STARTED REASONING_START REASONING_MESSAGE_START REASONING_MESSAGE_CONTENT REASONING_MESSAGE_END REASONING_END TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END RUN_FINISHED",
    "wholeSettled": "{\"result\":null,\"newMessages\":2}",
    "wholeMessages": "reasoning:Let me check.\u0001assistant:Checked.",
    "wholeMessagesCount": 2,
    "wholeMessagesContentOnly": "Let me check.\u0001Checked.",
-   "wholeMessagesJson": "[{\"id\":\"91d1f950-44ea-4c5b-af92-a5639d912c4b\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
+   "wholeMessagesJson": "[{\"id\":\"f2ecadac-b598-4ad4-a715-268b6b8ef9b4\",\"role\":\"reasoning\",\"content\":\"Let me check.\"},{\"id\":\"era45-m1\",\"role\":\"assistant\",\"content\":\"Checked.\"}]"
   },
   {
    "fixture": "era-0-0-47-upgrades-binary-content",
@@ -1207,7 +1207,7 @@
    "cutMessagesCount": 0,
    "cutMessagesContentOnly": "",
    "cutMessagesJson": "[]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED RUN_FINISHED",
    "wholeErrSettled": "{\"error\":\"Cannot send event type 'TEXT_MESSAGE_START': The run has already finished with 'RUN_FINISHED'. Start a new run with 'RUN_STARTED'.\"}",
    "wholeThrew": "Cannot send event type 'TEXT_MESSAGE_START': The run has already finished with 'RUN_FINISHED'. Start a new run with 'RUN_STARTED'."
   },
@@ -1221,7 +1221,7 @@
    "cutMessagesCount": 0,
    "cutMessagesContentOnly": "",
    "cutMessagesJson": "[]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED RUN_FINISHED",
    "wholeErrSettled": "{\"error\":\"Cannot send event type 'TEXT_MESSAGE_START': The run has already finished with 'RUN_FINISHED'. Start a new run with 'RUN_STARTED'.\"}",
    "wholeThrew": "Cannot send event type 'TEXT_MESSAGE_START': The run has already finished with 'RUN_FINISHED'. Start a new run with 'RUN_STARTED'."
   },
@@ -1370,7 +1370,7 @@
    "cutMessagesCount": 0,
    "cutMessagesContentOnly": "",
    "cutMessagesJson": "[]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TEXT_MESSAGE_START",
    "wholeErrSettled": "{\"error\":\"[\\n  {\\n    \\\"expected\\\": \\\"string\\\",\\n    \\\"code\\\": \\\"invalid_type\\\",\\n    \\\"path\\\": [\\n      \\\"delta\\\"\\n    ],\\n    \\\"message\\\": \\\"Invalid input: expected string, received number\\\"\\n  }\\n]\"}",
    "wholeThrew": "[\n  {\n    \"expected\": \"string\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"delta\"\n    ],\n    \"message\": \"Invalid input: expected string, received number\"\n  }\n]"
   },
@@ -1384,7 +1384,7 @@
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "",
    "cutMessagesJson": "[{\"id\":\"m-1\",\"role\":\"assistant\",\"content\":\"\"}]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TEXT_MESSAGE_START",
    "wholeErrSettled": "{\"error\":\"[\\n  {\\n    \\\"expected\\\": \\\"string\\\",\\n    \\\"code\\\": \\\"invalid_type\\\",\\n    \\\"path\\\": [\\n      \\\"delta\\\"\\n    ],\\n    \\\"message\\\": \\\"Invalid input: expected string, received number\\\"\\n  }\\n]\"}",
    "wholeThrew": "[\n  {\n    \"expected\": \"string\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"delta\"\n    ],\n    \"message\": \"Invalid input: expected string, received number\"\n  }\n]"
   },
@@ -1393,9 +1393,9 @@
    "k": 3,
    "of": 5,
    "threw": "[\n  {\n    \"expected\": \"string\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"delta\"\n    ],\n    \"message\": \"Invalid input: expected string, received number\"\n  }\n]",
-   "cutDelivered": "RUN_STARTED",
+   "cutDelivered": "RUN_STARTED TEXT_MESSAGE_START",
    "cutErrSettled": "{\"error\":\"[\\n  {\\n    \\\"expected\\\": \\\"string\\\",\\n    \\\"code\\\": \\\"invalid_type\\\",\\n    \\\"path\\\": [\\n      \\\"delta\\\"\\n    ],\\n    \\\"message\\\": \\\"Invalid input: expected string, received number\\\"\\n  }\\n]\"}",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TEXT_MESSAGE_START",
    "wholeErrSettled": "{\"error\":\"[\\n  {\\n    \\\"expected\\\": \\\"string\\\",\\n    \\\"code\\\": \\\"invalid_type\\\",\\n    \\\"path\\\": [\\n      \\\"delta\\\"\\n    ],\\n    \\\"message\\\": \\\"Invalid input: expected string, received number\\\"\\n  }\\n]\"}",
    "wholeThrew": "[\n  {\n    \"expected\": \"string\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"delta\"\n    ],\n    \"message\": \"Invalid input: expected string, received number\"\n  }\n]"
   },
@@ -1404,9 +1404,9 @@
    "k": 4,
    "of": 5,
    "threw": "[\n  {\n    \"expected\": \"string\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"delta\"\n    ],\n    \"message\": \"Invalid input: expected string, received number\"\n  }\n]",
-   "cutDelivered": "RUN_STARTED",
+   "cutDelivered": "RUN_STARTED TEXT_MESSAGE_START",
    "cutErrSettled": "{\"error\":\"[\\n  {\\n    \\\"expected\\\": \\\"string\\\",\\n    \\\"code\\\": \\\"invalid_type\\\",\\n    \\\"path\\\": [\\n      \\\"delta\\\"\\n    ],\\n    \\\"message\\\": \\\"Invalid input: expected string, received number\\\"\\n  }\\n]\"}",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TEXT_MESSAGE_START",
    "wholeErrSettled": "{\"error\":\"[\\n  {\\n    \\\"expected\\\": \\\"string\\\",\\n    \\\"code\\\": \\\"invalid_type\\\",\\n    \\\"path\\\": [\\n      \\\"delta\\\"\\n    ],\\n    \\\"message\\\": \\\"Invalid input: expected string, received number\\\"\\n  }\\n]\"}",
    "wholeThrew": "[\n  {\n    \"expected\": \"string\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"delta\"\n    ],\n    \"message\": \"Invalid input: expected string, received number\"\n  }\n]"
   },
@@ -1638,7 +1638,7 @@
    "cutMessagesCount": 0,
    "cutMessagesContentOnly": "",
    "cutMessagesJson": "[]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT",
    "wholeErrSettled": "{\"error\":\"Cannot send 'RUN_FINISHED' while text messages are still active: open-message-at-run-finished-m-1\"}",
    "wholeThrew": "Cannot send 'RUN_FINISHED' while text messages are still active: open-message-at-run-finished-m-1"
   },
@@ -1652,7 +1652,7 @@
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "",
    "cutMessagesJson": "[{\"id\":\"open-message-at-run-finished-m-1\",\"role\":\"assistant\",\"content\":\"\"}]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT",
    "wholeErrSettled": "{\"error\":\"Cannot send 'RUN_FINISHED' while text messages are still active: open-message-at-run-finished-m-1\"}",
    "wholeThrew": "Cannot send 'RUN_FINISHED' while text messages are still active: open-message-at-run-finished-m-1"
   },
@@ -1666,7 +1666,7 @@
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "never closed",
    "cutMessagesJson": "[{\"id\":\"open-message-at-run-finished-m-1\",\"role\":\"assistant\",\"content\":\"never closed\"}]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT",
    "wholeErrSettled": "{\"error\":\"Cannot send 'RUN_FINISHED' while text messages are still active: open-message-at-run-finished-m-1\"}",
    "wholeThrew": "Cannot send 'RUN_FINISHED' while text messages are still active: open-message-at-run-finished-m-1"
   },
@@ -2822,7 +2822,7 @@
    "cutMessagesCount": 0,
    "cutMessagesContentOnly": "",
    "cutMessagesJson": "[]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED SUBAGENT_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END",
    "wholeErrSettled": "{\"error\":\"Cannot send 'RUN_FINISHED' while subagents are still active: s-run-finished-active-subagent-1\"}",
    "wholeThrew": "Cannot send 'RUN_FINISHED' while subagents are still active: s-run-finished-active-subagent-1"
   },
@@ -2836,7 +2836,7 @@
    "cutMessagesCount": 0,
    "cutMessagesContentOnly": "",
    "cutMessagesJson": "[]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED SUBAGENT_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END",
    "wholeErrSettled": "{\"error\":\"Cannot send 'RUN_FINISHED' while subagents are still active: s-run-finished-active-subagent-1\"}",
    "wholeThrew": "Cannot send 'RUN_FINISHED' while subagents are still active: s-run-finished-active-subagent-1"
   },
@@ -2850,7 +2850,7 @@
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "",
    "cutMessagesJson": "[{\"id\":\"m-run-finished-active-subagent-1\",\"role\":\"assistant\",\"content\":\"\",\"subagentRunId\":\"s-run-finished-active-subagent-1\"}]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED SUBAGENT_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END",
    "wholeErrSettled": "{\"error\":\"Cannot send 'RUN_FINISHED' while subagents are still active: s-run-finished-active-subagent-1\"}",
    "wholeThrew": "Cannot send 'RUN_FINISHED' while subagents are still active: s-run-finished-active-subagent-1"
   },
@@ -2864,7 +2864,7 @@
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "working",
    "cutMessagesJson": "[{\"id\":\"m-run-finished-active-subagent-1\",\"role\":\"assistant\",\"content\":\"working\",\"subagentRunId\":\"s-run-finished-active-subagent-1\"}]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED SUBAGENT_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END",
    "wholeErrSettled": "{\"error\":\"Cannot send 'RUN_FINISHED' while subagents are still active: s-run-finished-active-subagent-1\"}",
    "wholeThrew": "Cannot send 'RUN_FINISHED' while subagents are still active: s-run-finished-active-subagent-1"
   },
@@ -2878,7 +2878,7 @@
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "working",
    "cutMessagesJson": "[{\"id\":\"m-run-finished-active-subagent-1\",\"role\":\"assistant\",\"content\":\"working\",\"subagentRunId\":\"s-run-finished-active-subagent-1\"}]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED SUBAGENT_STARTED TEXT_MESSAGE_START TEXT_MESSAGE_CONTENT TEXT_MESSAGE_END",
    "wholeErrSettled": "{\"error\":\"Cannot send 'RUN_FINISHED' while subagents are still active: s-run-finished-active-subagent-1\"}",
    "wholeThrew": "Cannot send 'RUN_FINISHED' while subagents are still active: s-run-finished-active-subagent-1"
   },
@@ -3212,7 +3212,7 @@
    "cutMessagesCount": 0,
    "cutMessagesContentOnly": "",
    "cutMessagesJson": "[]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TOOL_CALL_START TOOL_CALL_ARGS",
    "wholeErrSettled": "{\"error\":\"Cannot send 'TOOL_CALL_END': subagentRunId 's-subagent-attribution-mismatch-2' does not match the tool call 'tc-subagent-attribution-mismatch-1' opener's subagent 's-subagent-attribution-mismatch-1'.\"}",
    "wholeThrew": "Cannot send 'TOOL_CALL_END': subagentRunId 's-subagent-attribution-mismatch-2' does not match the tool call 'tc-subagent-attribution-mismatch-1' opener's subagent 's-subagent-attribution-mismatch-1'."
   },
@@ -3226,7 +3226,7 @@
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "null",
    "cutMessagesJson": "[{\"id\":\"tc-subagent-attribution-mismatch-1\",\"role\":\"assistant\",\"toolCalls\":[{\"id\":\"tc-subagent-attribution-mismatch-1\",\"type\":\"function\",\"function\":{\"name\":\"lookup\",\"arguments\":\"\"}}],\"subagentRunId\":\"s-subagent-attribution-mismatch-1\"}]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TOOL_CALL_START TOOL_CALL_ARGS",
    "wholeErrSettled": "{\"error\":\"Cannot send 'TOOL_CALL_END': subagentRunId 's-subagent-attribution-mismatch-2' does not match the tool call 'tc-subagent-attribution-mismatch-1' opener's subagent 's-subagent-attribution-mismatch-1'.\"}",
    "wholeThrew": "Cannot send 'TOOL_CALL_END': subagentRunId 's-subagent-attribution-mismatch-2' does not match the tool call 'tc-subagent-attribution-mismatch-1' opener's subagent 's-subagent-attribution-mismatch-1'."
   },
@@ -3240,7 +3240,7 @@
    "cutMessagesCount": 1,
    "cutMessagesContentOnly": "null",
    "cutMessagesJson": "[{\"id\":\"tc-subagent-attribution-mismatch-1\",\"role\":\"assistant\",\"toolCalls\":[{\"id\":\"tc-subagent-attribution-mismatch-1\",\"type\":\"function\",\"function\":{\"name\":\"lookup\",\"arguments\":\"{}\"}}],\"subagentRunId\":\"s-subagent-attribution-mismatch-1\"}]",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TOOL_CALL_START TOOL_CALL_ARGS",
    "wholeErrSettled": "{\"error\":\"Cannot send 'TOOL_CALL_END': subagentRunId 's-subagent-attribution-mismatch-2' does not match the tool call 'tc-subagent-attribution-mismatch-1' opener's subagent 's-subagent-attribution-mismatch-1'.\"}",
    "wholeThrew": "Cannot send 'TOOL_CALL_END': subagentRunId 's-subagent-attribution-mismatch-2' does not match the tool call 'tc-subagent-attribution-mismatch-1' opener's subagent 's-subagent-attribution-mismatch-1'."
   },
@@ -3249,9 +3249,9 @@
    "k": 4,
    "of": 5,
    "threw": "Cannot send 'TOOL_CALL_END': subagentRunId 's-subagent-attribution-mismatch-2' does not match the tool call 'tc-subagent-attribution-mismatch-1' opener's subagent 's-subagent-attribution-mismatch-1'.",
-   "cutDelivered": "RUN_STARTED",
+   "cutDelivered": "RUN_STARTED TOOL_CALL_START TOOL_CALL_ARGS",
    "cutErrSettled": "{\"error\":\"Cannot send 'TOOL_CALL_END': subagentRunId 's-subagent-attribution-mismatch-2' does not match the tool call 'tc-subagent-attribution-mismatch-1' opener's subagent 's-subagent-attribution-mismatch-1'.\"}",
-   "wholeDelivered": "RUN_STARTED",
+   "wholeDelivered": "RUN_STARTED TOOL_CALL_START TOOL_CALL_ARGS",
    "wholeErrSettled": "{\"error\":\"Cannot send 'TOOL_CALL_END': subagentRunId 's-subagent-attribution-mismatch-2' does not match the tool call 'tc-subagent-attribution-mismatch-1' opener's subagent 's-subagent-attribution-mismatch-1'.\"}",
    "wholeThrew": "Cannot send 'TOOL_CALL_END': subagentRunId 's-subagent-attribution-mismatch-2' does not match the tool call 'tc-subagent-attribution-mismatch-1' opener's subagent 's-subagent-attribution-mismatch-1'."
   },

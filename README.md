@@ -63,7 +63,7 @@ problem on a corpus where 54 were. A tool that cries wolf is worse than no tool.
 [AG-UI](https://github.com/ag-ui-protocol/ag-ui) ships 68 conformance fixtures — real
 event streams, written by the protocol's authors, with the outcome each one requires.
 Two are a single event long and have no cut point, so 66 were replayed: each through a
-real `HttpAgent` over real HTTP/SSE — `@ag-ui/client@1.0.0` — whole and then cut at every
+real `HttpAgent` over real HTTP/SSE — `@ag-ui/client@1.0.2` — whole and then cut at every
 event boundary. Both
 steps are in `results/` and the recording is committed, so the block below is one
 command away:
@@ -180,9 +180,27 @@ If you stream user-visible text through a filter, you want both.
 ### What this is not
 
 It is one protocol, cut at event boundaries, and one client at one version:
-`@ag-ui/client@1.0.0`. The figures move with the client, so the version is part of the
+`@ag-ui/client@1.0.2`. The figures move with the client, so the version is part of the
 result rather than a footnote — replaying the same corpus through `0.0.58` gives
-141/49/47/31, because that older client rejects four fixtures this one parses. Cutting inside
+141/49/47/31, because that older client rejects four fixtures this one parses. Across the
+1.0 patch line the figures above did not move — the `1.0.0` recording is committed beside
+the current one as `results/sever-results-1.0.0.json`, so the comparison is two commands
+rather than a claim.
+
+What did move is a figure those eight lines never print. The prefix property — what a cut
+delivers must be a prefix of what the whole run delivers — was **broken on 14 cuts** under
+`1.0.0` and is broken on none under `1.0.2`. All 14 sit in eight `-fatal` fixtures, which
+`run-ag-ui.mjs` excludes by label as invalid on purpose, which is why no count in the block
+changed. The mechanism is the inversion: on `1.0.0` the whole run surfaced `RUN_STARTED`
+and nothing else before throwing, so a shorter cut — still valid at that point — delivered
+*more* than the whole, and the property that holds everywhere else turned upside down. On
+`1.0.2` both surface the valid prefix. A newer client fixing an invariant this harness
+measures is the better advertisement for re-recording than the counts holding.
+
+One limit worth naming: `era-0-0-45-thinking-translated` mints a message id per run, so the
+recording cannot be byte-reproduced even against the same client, and the recording pins the
+client version but not the corpus — a fixture added to AG-UI's corpus changes the counts
+without changing anything here. Cutting inside
 a frame — mid-UTF-8 sequence, mid-SSE frame, mid tool-call JSON — is covered for a single
 body by [`probes/ag-ui-bytes.mjs`](probes/ag-ui-bytes.mjs), and it found nothing: of 124
 seams exactly one reports what the whole body reports, and that one is byte 395 of 396, the

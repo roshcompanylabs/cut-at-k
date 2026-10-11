@@ -23,6 +23,11 @@ if (!input) {
 
 const raw = JSON.parse(readFileSync(input, 'utf8'));
 
+// The version belongs in the output, not only in the README: a recording carries
+// the client that produced it, and a figure quoted without one is not a figure.
+if (raw.client) console.log(`${raw.client.name}@${raw.client.version}
+`);
+
 // Rebuild one report per fixture from the recorded observations. Replaying is
 // already done; this replays from the recording so the analysis is the
 // library's, not a bespoke script's.

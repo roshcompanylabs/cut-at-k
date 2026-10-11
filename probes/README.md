@@ -22,7 +22,7 @@ reported, as a string), and anything else you want carried into `lostContent`.
 
 | | when the run is cut | verdict |
 |---|---|---|
-| **AG-UI** `@ag-ui/client@1.0.0` | the awaited call resolves with what a completed run resolves with | **reported** |
+| **AG-UI** `@ag-ui/client@1.0.2` | the awaited call resolves with what a completed run resolves with | **reported** |
 | **Vercel AI SDK** `ai@7.0.118` | a cut that streamed text reports `finishReason: other`; a cut that streamed none raises instead | clean |
 | **LangGraph JS** `@langchain/langgraph@1.4.18` | the checkpoint stops where the consumer stopped, `next` says where to resume, and the call raises | clean |
 | **Mastra** `@mastra/core@1.71.0` | every cut that showed the consumer text still persisted it, and an error part raises | clean |
@@ -58,7 +58,13 @@ Already reported by someone else as
 a fix open at [#2354](https://github.com/ag-ui-protocol/ag-ui/pull/2354). What this
 harness added was the frequency, and then
 [a false positive in that fix](https://github.com/ag-ui-protocol/ag-ui/pull/2354#issuecomment-5849020368):
-its cancellation exemption does not survive a stop-and-resend.
+its cancellation exemption was read from one boolean on the agent instance, so a stop
+followed by a resend cleared it and the cancelled run was reported as truncated. That was
+fixed on 2026-09-29 — the flag is a per-run token now — and
+[re-measured here](https://github.com/ag-ui-protocol/ag-ui/pull/2354#issuecomment-5901913724)
+once it had landed. Whether a cancelled run should be exempt at all is a separate argument,
+and the case against it is next door: [ag-ui#2417](https://github.com/ag-ui-protocol/ag-ui/issues/2417)
+shows a stopped run settling exactly as a completed one does.
 
 ## Vercel AI SDK — clean, and the shortest adapter to copy
 

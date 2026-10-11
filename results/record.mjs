@@ -16,6 +16,12 @@ import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { createRequire } from 'node:module';
 import { HttpAgent } from '@ag-ui/client';
+import { requireLatest } from '../probes/_versions.mjs';
+
+// The probes have refused to measure a stale install since the Mastra afternoon;
+// this script writes a figure that gets committed, so it is the last place that
+// should have been exempt.
+await requireLatest(['@ag-ui/client'], { from: import.meta.url });
 
 const CORPUS = process.argv[2];
 const OUT = process.argv[3];
