@@ -72,6 +72,21 @@ command away:
 node results/run-ag-ui.mjs results/sever-results.json
 ```
 
+**Recorded again on `1.0.3`**, which arrived on 16 October, and committed beside it as
+`results/sever-results-1.0.3.json`. Every line of the block below is the same on both,
+and with minted ids normalised the 277 rows hash identically — so the client's behaviour
+at a cut did not move between the two.
+
+```
+node results/run-ag-ui.mjs results/sever-results-1.0.3.json
+```
+
+That comparison only became possible with this run. The client mints a v4 UUID for a
+message the stream never gave an id, and it lands in the recording, so re-recording the
+*same* version twice used to differ in sixteen fields — enough to hide a real change
+inside noise shaped exactly like one. `record.mjs` now rewrites minted ids to
+`<minted-N>` positionally, and two recordings of one version are byte-identical.
+
 
 ```
 48 streams, 227 cuts, 18 streams excluded as invalid on purpose

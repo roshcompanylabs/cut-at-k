@@ -83,6 +83,30 @@ function contentOnly(messages) {
     .join('\u0001');
 }
 
+/**
+ * Replace client-minted ids with stable placeholders.
+ *
+ * Some events carry no id, and the client mints one — a v4 UUID, fresh on every
+ * run. It lands in the recorded JSON, so re-recording the *same* client version
+ * twice produced sixteen differing fields across two columns, all of them that
+ * id. That makes the recording unusable for the one job it has: a later run on
+ * a new version cannot be diffed against this one, because the real change would
+ * arrive mixed into noise that looks exactly like it.
+ *
+ * Positional rather than wholesale, so the information in an id survives: two
+ * messages sharing a minted id still share a placeholder, and two that differ
+ * still differ. No fixture in the corpus contains a UUID, so anything matching
+ * here was minted rather than authored.
+ */
+const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+function stableIds(json) {
+  const seen = new Map();
+  return json.replace(UUID, (id) => {
+    if (!seen.has(id)) seen.set(id, `<minted-${seen.size + 1}>`);
+    return seen.get(id);
+  });
+}
+
 async function replay(fixture, k) {
   const delivered = [];
   const agent = new HttpAgent({
@@ -97,7 +121,7 @@ async function replay(fixture, k) {
       messagesCount: msgs.length,
       messagesText: textOf(msgs),
       messagesContentOnly: contentOnly(msgs),
-      messagesJson: JSON.stringify(msgs),
+      messagesJson: stableIds(JSON.stringify(msgs)),
     };
   } catch (err) {
     const m = err instanceof Error ? err.message : String(err);
