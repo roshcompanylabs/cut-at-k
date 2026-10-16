@@ -212,10 +212,11 @@ and nothing else before throwing, so a shorter cut — still valid at that point
 `1.0.2` both surface the valid prefix. A newer client fixing an invariant this harness
 measures is the better advertisement for re-recording than the counts holding.
 
-One limit worth naming: `era-0-0-45-thinking-translated` mints a message id per run, so the
-recording cannot be byte-reproduced even against the same client, and the recording pins the
-client version but not the corpus — a fixture added to AG-UI's corpus changes the counts
-without changing anything here. Cutting inside
+One limit worth naming: the recording pins the client version but not the corpus — a fixture
+added to AG-UI's corpus changes the counts without changing anything here. The id that
+`era-0-0-45-thinking-translated` mints per run is normalised rather than removed, and
+`<minted-N>` records that two messages shared an id rather than which id it was, so a change
+that altered only an id's value would not show up. Cutting inside
 a frame — mid-UTF-8 sequence, mid-SSE frame, mid tool-call JSON — is covered for a single
 body by [`probes/ag-ui-bytes.mjs`](probes/ag-ui-bytes.mjs), and it found nothing: of 124
 seams exactly one reports what the whole body reports, and that one is byte 395 of 396, the
