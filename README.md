@@ -16,6 +16,36 @@ client once whole and once for every prefix of it, and ask two questions of each
 The second one is where things are usually wrong, and it is quiet when it is wrong,
 which is why a loop is better at finding it than reading the code.
 
+## See it run before writing anything
+
+```bash
+npx cut-at-k demo
+```
+
+Nothing to install and nothing sent anywhere — it replays a recording that ships
+with the package, 48 of AG-UI's own conformance streams cut at every event
+boundary, and prints what the client did with each cut:
+
+```
+48 streams, 227 cuts, 18 streams excluded as invalid on purpose
+4 cuts threw during replay
+
+reported the same as the whole run    : 154
+  of which something was actually lost : 54
+  of those, no terminal event either   : 52
+spread across                          : 34 streams
+```
+
+To ask the same question of a client you have installed rather than a recording,
+`npx cut-at-k probe` lists the ones that ship with this package — AG-UI, the
+Vercel AI SDK, LangGraph, Mastra, the OpenAI Node SDK, the MCP TypeScript SDK,
+and the same question again in Python — and says which you can run right now and
+what to install for the rest.
+Each is a worked answer to everything the API below asks you to decide, against a
+real SDK. [`probes/README.md`](probes/README.md) carries what they found.
+
+## Point it at your own client
+
 ```bash
 npm install cut-at-k
 ```
