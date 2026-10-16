@@ -8,8 +8,11 @@ the SDK lives in one `replay` function, and the loop, the comparison and the rep
 come from `severAtEveryPoint` and `summarise`. To point this at something else, copy
 the shortest one and change `replay` and the `lostContent` predicate. Nothing else.
 
-They sit outside `files`, so the published package keeps its zero dependencies while
-each probe pulls in the SDK it tests. Install that first.
+They ship with the package as of 0.2.0, which does not cost it its zero dependencies:
+each probe imports the SDK it measures, and you install that yourself. `npx cut-at-k
+probe` lists them and prints the install line for whichever you cannot run yet, which
+is the one check a probe cannot do for itself — `requireLatest` resolves the SDK from
+inside the probe and throws when it is absent.
 
 ```js
 const report = await severAtEveryPoint({ events, replay, label: 'my-client' });

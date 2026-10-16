@@ -13,10 +13,12 @@ identifiers:
     value: 10.5281/zenodo.23002965
     description: "Concept DOI — always resolves to the latest version"
   - type: doi
-    value: 10.5281/zenodo.23002966
-    description: "Version DOI for v0.1.3"
+    value: 10.5281/zenodo.23424336
+    description: "Version DOI for v0.2.0"
 repository-code: "https://github.com/roshcompanylabs/cut-at-k"
 url: "https://github.com/roshcompanylabs/cut-at-k#readme"
+version: 0.2.0
+date-released: 2026-10-16
 license: MIT
 keywords:
   - streaming
