@@ -22,18 +22,30 @@ reported, as a string), and anything else you want carried into `lostContent`.
 
 | | when the run is cut | verdict |
 |---|---|---|
-| **AG-UI** `@ag-ui/client@1.0.2` | the awaited call resolves with what a completed run resolves with | **reported** |
-| **Vercel AI SDK** `ai@7.0.118` | a cut that streamed text reports `finishReason: other`; a cut that streamed none raises instead | clean |
-| **LangGraph JS** `@langchain/langgraph@1.4.18` | the checkpoint stops where the consumer stopped, `next` says where to resume, and the call raises | clean |
-| **Mastra** `@mastra/core@1.71.0` | every cut that showed the consumer text still persisted it, and an error part raises | clean |
-| **OpenAI Node** `openai@7.23.0` | `finalResponse()` still carries the tool call the consumer watched arrive, and `status` never says `completed` | clean |
-| **MCP TypeScript SDK** `@modelcontextprotocol/client@2.1.0` | the response can no longer arrive, and the caller is told only when its own timeout fires | **reported** |
-| **OpenAI Python** `openai==3.22.1` | every cut raises rather than returning something that looks finished — but the call it accumulated is not reachable | clean |
+| **AG-UI** `@ag-ui/client@1.0.3` | the awaited call resolves with what a completed run resolves with | **reported** |
+| **Vercel AI SDK** `ai@7.0.142` | a cut that streamed text reports `finishReason: other`; a cut that streamed none raises instead | clean |
+| **LangGraph JS** `@langchain/langgraph@1.5.0` | the checkpoint stops where the consumer stopped, `next` says where to resume, and the call raises | clean |
+| **Mastra** `@mastra/core@1.78.0` | every cut that showed the consumer text still persisted it, and an error part raises | clean |
+| **OpenAI Node** `openai@7.34.0` | `finalResponse()` still carries the tool call the consumer watched arrive, and `status` never says `completed` | clean |
+| **MCP TypeScript SDK** `@modelcontextprotocol/client@2.3.1` | the response can no longer arrive, and the caller is told only when its own timeout fires | **reported** |
+| **OpenAI Python** `openai==3.31.0` | every cut raises rather than returning something that looks finished — but the call it accumulated is not reachable | clean |
 
 Seven asked, five clean. Both of the two that answer wrongly were already reported by
 someone else, which is the honest description of what this is for: the contribution
 is the shape of a known defect, not its discovery. A harness that finds something
 new everywhere it looks is measuring itself.
+
+**All seven re-measured on 16 October, three weeks after the first pass.** Every pinned
+version had moved — `ai` by twenty-four releases, `@mastra/core` by seven minors, `openai`
+by eleven, and `@ag-ui/client` that morning — and **not one verdict changed**. The AG-UI
+corpus run is the strongest form of that: 277 cut points, and with minted ids normalised
+the rows hash identically on `1.0.2` and `1.0.3`. The MCP row is still **reported** because
+[#2830](https://github.com/modelcontextprotocol/typescript-sdk/pull/2830) is still open,
+untouched since 23 September.
+
+Nothing moving is a weaker result than a regression, and it is the one worth being able to
+state. A table of verdicts against versions nobody can still install is a historical note;
+the same table re-derived against today's releases is a claim about the ecosystem now.
 
 One probe asks a different question, because the answer to this one turned out to
 depend on something no cut can reach: [the line
@@ -254,17 +266,19 @@ node probes/mcp-streamable-http.mjs
 
 A Streamable HTTP request can get a `text/event-stream` body back, and that leg is the
 only place the matching JSON-RPC response can arrive. If it ends first, the response is
-never coming. On `@modelcontextprotocol/client@2.1.0`, with a 400 ms timeout:
+never coming. On `@modelcontextprotocol/client@2.3.1`, with a 400 ms timeout:
 
 ```
   k  written                      notifications seen     settled            ms    told promptly  caller callback
-  1  a comment frame              —                      REQUEST_TIMEOUT    403   false          false
-  2  an unrelated notification    notifications/message  REQUEST_TIMEOUT    406   false          false
-  3  half of the response frame   notifications/message  REQUEST_TIMEOUT    402   false          false
-  4  the whole response frame     notifications/message  resolved           8     true           false
+  1  a comment frame              —                      REQUEST_TIMEOUT    408   false          false
+  2  an unrelated notification    notifications/message  REQUEST_TIMEOUT    409   false          false
+  3  half of the response frame   notifications/message  REQUEST_TIMEOUT    401   false          false
+  4  the whole response frame     notifications/message  resolved           19    true           false
 ```
 
 One run. The millisecond figures move by a few either way; the 400 ms wall does not.
+Measured first on `2.1.0` and again on `2.3.1`, which changed nothing here — the fix
+below is still open.
 
 Reported as
 [typescript-sdk#2739](https://github.com/modelcontextprotocol/typescript-sdk/issues/2739)
